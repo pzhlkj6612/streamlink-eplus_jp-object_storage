@@ -1,0 +1,7 @@
+# Container configurations
+*.yml
+*.yaml
+
+# Downloaded or generated videos
+*.ts
+*.mp4

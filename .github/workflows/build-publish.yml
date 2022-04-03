@@ -1,0 +1,54 @@
+# Based on:
+#   Publishing Docker images - GitHub Docs
+#     https://docs.github.com/en/actions/publishing-packages/publishing-docker-images
+
+name: Build and publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      -
+        name: Get the name of this repo
+        id: repo-name
+        run: echo "::set-output name=output::${GITHUB_REPOSITORY#*/}"
+      -
+        name: Check out the repo
+        uses: actions/checkout@v2
+        with:
+          depth: 1
+      -
+        name: Log in to Docker Hub
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7  # v1.14.1
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      -
+        name: Log in to GitHub Packages
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7  # v1.14.1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@e5622373a38e60fb6d795a4421e56882f2d7a681  # v3.6.2
+        with:
+          images: |
+            ${{ github.repository_owner }}/${{ steps.repo-name.outputs.output }}
+            ghcr.io/${{ github.repository }}
+      -
+        name: Build and push Docker images
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
