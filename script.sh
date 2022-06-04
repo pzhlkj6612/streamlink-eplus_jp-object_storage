@@ -12,16 +12,10 @@ printf -v the_datetime '%(%Y%m%d-%H%M%S)T' -1
 # Utilities #
 
 function test_variable() {
-    # "set -u" doesn't work in some cases.
-
-    set -u
-
     if [[ -z "${!1}" ]]; then
         echo "ENV '${1}' not found."
         exit 1
     fi
-
-    set +u
 }
 
 # Utilities #
