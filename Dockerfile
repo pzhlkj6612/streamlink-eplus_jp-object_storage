@@ -1,5 +1,7 @@
 FROM ubuntu:focal
 
+COPY --chown=0:0 --chmod=700 ./script.sh /script.sh
+
 RUN apt update && \
     apt install \
         -y \
@@ -35,7 +37,5 @@ RUN mkdir -p '/opt/ffmpeg' && \
 ENV PATH="/opt/ffmpeg/bin:${PATH}"
 
 VOLUME [ "/SL-downloads" ]
-
-COPY --chown=0:0 --chmod=700 ./script.sh /script.sh
 
 ENTRYPOINT [ "/script.sh" ]
