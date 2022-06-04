@@ -76,7 +76,6 @@ Create a service:
 ```YAML
 # docker-compose.yml
 
-version: "3.9"
 services:
   sl:
     image: docker.io/pzhlkj6612/streamlink-eplus_jp-object_storage
