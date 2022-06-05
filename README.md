@@ -10,7 +10,9 @@
 
 ## Details
 
-20 GB disk space required.
+### Storage requirement
+
+For lives of Liella, the size of a 4-hour MPEG-TS record with the best quality is about 9.88 GB (9.2 GiB). Since we may transcode MPEG-TS to MP4 (a bit smaller) and keep both files, 20 GB free disk space is required.
 
 ### Prepare your object storage
 
