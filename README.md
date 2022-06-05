@@ -122,10 +122,12 @@ services:
       - OUTPUT_FILENAME_BASE=
 
       # switches
-      - NO_DOWNLOAD_STREAM=  # disable streamlink, generate a still image video.
-      - NO_TRANSCODE=        # disable FFmpeg transcode, generate a dummy video.
+      - NO_DOWNLOAD_STREAM=  # disable streamlink.
+      - NO_TRANSCODE=        # disable FFmpeg transcode.
       - NO_S3=               # disable s3cmd.
       - NO_AZURE=            # disable azure-cli.
+      - GENERATE_DUMMY_MPEG_TS=  # generate a still image video when "NO_DOWNLOAD_STREAM" set.
+      - GENERATE_DUMMY_MP4=  # generate a dummy video when "NO_TRANSCODE" set.
 
       # streamlink
       - EPLUS_JP_STREAM_URL=
@@ -193,13 +195,17 @@ spec:
           value: ""
 
         # switches
-        - name: NO_DOWNLOAD_STREAM  # disable streamlink, generate a still image video.
+        - name: NO_DOWNLOAD_STREAM  # disable streamlink.
           value: ""
-        - name: NO_TRANSCODE        # disable FFmpeg transcode, generate a dummy video.
+        - name: NO_TRANSCODE        # disable FFmpeg transcode.
           value: ""
         - name: NO_S3               # disable s3cmd.
           value: ""
         - name: NO_AZURE            # disable azure-cli.
+          value: ""
+        - name: GENERATE_DUMMY_MPEG_TS  # generate a still image video when "NO_DOWNLOAD_STREAM" set.
+          value: ""
+        - name: GENERATE_DUMMY_MP4  # generate a dummy video when "NO_TRANSCODE" set.
           value: ""
 
         # streamlink
