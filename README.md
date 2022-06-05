@@ -69,7 +69,9 @@ Environment variables:
 
 #### Docker
 
-Install [Docker](https://docs.docker.com/get-docker/) and [Compose V2](https://docs.docker.com/compose/cli-command/). Create a service:
+Install [Docker Engine](https://docs.docker.com/engine/). I recommend that you use [Compose V2](https://docs.docker.com/compose/#compose-v2-and-the-new-docker-compose-command) by executing the new [`docker compose`](https://docs.docker.com/engine/reference/commandline/compose/) command.
+
+Create a service:
 
 ```YAML
 # docker-compose.yml
