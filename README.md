@@ -25,7 +25,7 @@ Intermediate files. Those files will be renamed to "final files" before being up
 ${datetime}.${OUTPUT_FILENAME_BASE}.{ts,mp4}
 
 # example:
-'20220605-040302.liella-2nd-Osaka-day2.ts'
+'20220605-040302+0100.liella-2nd-Osaka-day2.ts'
 
 ```
 
@@ -36,14 +36,14 @@ Final files:
 ${datetime}.${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}
 
 # example:
-'20220605-040302.liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'
+'20220605-040302+0100.liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'
 
 ```
 
 | Variable | Description
 | - | -
 | OUTPUT_FILENAME_BASE | base file name (env)
-| datetime | datetime in the local time zone. <br> `strftime(${datetime}, 16, "%Y%m%d-%H%M%S", localtime(&(time(0))))`
+| datetime | datetime with time zone. <br> `strftime(${datetime}, 21, "%Y%m%d-%H%M%S%z", localtime(&(time(0))))`
 | size | file size. <br> `du -b "$filepath"`
 | md5 | file hash. <br> `md5sum "$filepath"`
 
