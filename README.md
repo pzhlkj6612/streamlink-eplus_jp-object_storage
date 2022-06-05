@@ -39,7 +39,7 @@ Environment variables:
 | Name | Description
 | - | -
 | S3_BUCKET | URL in `s3://bucket-name/dir-name/` style
-| S3_HOSTNAME | `s3-eu-west-1.amazonaws.com` , `nyc3.digitaloceanspaces.com` , `us-east-1.linodeobjects.com` , `ewr1.vultrobjects.com` or `objects-us-east-1.dream.io` , for example
+| S3_HOSTNAME | For example: <br> `s3-eu-west-1.amazonaws.com` <br> `nyc3.digitaloceanspaces.com` <br> `us-east-1.linodeobjects.com` <br> `ewr1.vultrobjects.com` <br> `objects-us-east-1.dream.io`
 | AWS_ACCESS_KEY_ID | The access key
 | AWS_SECRET_ACCESS_KEY | The secret key
 
