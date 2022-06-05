@@ -25,10 +25,13 @@ RUN pip install \
         --upgrade \
         'https://github.com/streamlink/streamlink/archive/ebe0d7a2cc529cddf0cff54e56444f2720a76b4a.zip'
 
-RUN git clone \
-        --depth=1 -- \
-        'https://github.com/pmrowla/streamlink-plugins' \
-        '/SL-plugins'
+# git - How to shallow clone a specific commit with depth 1? - Stack Overflow
+#   https://stackoverflow.com/a/43136160
+RUN mkdir '/SL-plugins' && \
+    git -C '/SL-plugins' init && \
+    git -C '/SL-plugins' remote add 'origin' 'https://github.com/pmrowla/streamlink-plugins.git' && \
+    git -C '/SL-plugins' fetch --depth=1 'origin' '222f1a342ab475399b6fba30540b61e0acb05f11' && \
+    git -C '/SL-plugins' switch --detach 'FETCH_HEAD'
 
 RUN mkdir -p '/opt/ffmpeg' && \
     curl -L 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2022-06-04-12-33/ffmpeg-n5.0.1-4-ga5ebb3d25e-linux64-lgpl-shared-5.0.tar.xz' | \
