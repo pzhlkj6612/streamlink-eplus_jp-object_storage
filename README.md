@@ -6,7 +6,7 @@
 
 - Download the live streaming or VOD from [eplus - Japan most famous ticket play-guide](https://ib.eplus.jp/) via Streamlink.
 - Transcode the downloaded TS file to MP4 via FFmpeg.
-- Upload both the TS and MP4 files to Azure Storage container via Azure CLI.
+- Upload both the TS and MP4 files to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
 
 ## Details
 
