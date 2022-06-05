@@ -18,7 +18,7 @@ RUN pip install \
 RUN curl -L 'https://aka.ms/InstallAzureCLIDeb' | bash
 
 # python - Can I force pip to make a shallow checkout when installing from git? - Stack Overflow
-#   https://stackoverflow.com/q/52989272
+#   https://stackoverflow.com/a/52989760
 RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
