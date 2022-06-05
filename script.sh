@@ -266,6 +266,12 @@ function main() {
 
     output_mp4_base_path="/SL-downloads/${the_datetime}.${OUTPUT_FILENAME_BASE}.mp4"
 
+    if [[ -n "${NO_AUTO_PREFIX_DATETIME}" ]]; then
+        output_ts_base_path="/SL-downloads/${OUTPUT_FILENAME_BASE}.ts"
+
+        output_mp4_base_path="/SL-downloads/${OUTPUT_FILENAME_BASE}.mp4"
+    fi
+
     if [[ -z "${NO_S3}" ]]; then
         init_s3
     fi
