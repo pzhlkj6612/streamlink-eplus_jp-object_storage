@@ -30,13 +30,16 @@ Create your own object storage:
   - [Deploy a Static Site using Hugo and Object Storage | Linode](https://www.linode.com/docs/guides/host-static-site-object-storage/)
 - Vultr:
   - [Vultr Object Storage - Vultr.com](https://www.vultr.com/docs/vultr-object-storage)
+- DreamObjects:
+  - [DreamObjects overview – DreamHost Knowledge Base](https://help.dreamhost.com/hc/en-us/articles/214823108-DreamObjects-overview)
+  - [Installing S3cmd – DreamHost Knowledge Base](https://help.dreamhost.com/hc/en-us/articles/215916627-Installing-S3cmd)
 
 Environment variables:
 
 | Name | Description
 | - | -
 | S3_BUCKET | URL in `s3://bucket-name/dir-name/` style
-| S3_HOSTNAME | `s3-eu-west-1.amazonaws.com` , `nyc3.digitaloceanspaces.com` , `us-east-1.linodeobjects.com` or `ewr1.vultrobjects.com` , for example
+| S3_HOSTNAME | `s3-eu-west-1.amazonaws.com` , `nyc3.digitaloceanspaces.com` , `us-east-1.linodeobjects.com` , `ewr1.vultrobjects.com` or `objects-us-east-1.dream.io` , for example
 | AWS_ACCESS_KEY_ID | The access key
 | AWS_SECRET_ACCESS_KEY | The secret key
 
@@ -223,7 +226,7 @@ $ podman build --tag ${tag} .
   - [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds).
   - I'm using [shell-format - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format) to format my bash shell script.
 - Platforms:
-  - AWS, DigitalOcean, Linode and Vultr.
+  - AWS, DigitalOcean, Linode, Vultr and DreamHost.
   - Microsoft Azure.
   - [Stack Exchange](https://stackexchange.com/) website group.
   - Linux and Ubuntu.
