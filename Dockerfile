@@ -32,7 +32,7 @@ RUN mkdir '/SL-plugins' && \
     git -C '/SL-plugins' switch --detach 'FETCH_HEAD'
 
 RUN mkdir -p '/opt/ffmpeg' && \
-    curl -L 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2022-06-04-12-33/ffmpeg-n5.0.1-4-ga5ebb3d25e-linux64-lgpl-shared-5.0.tar.xz' | \
+    curl -L 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2022-06-25-12-29/ffmpeg-n5.0.1-5-g240d82f26e-linux64-gpl-shared-5.0.tar.xz' | \
         tar -C '/opt/ffmpeg' -f- -x --xz --strip-components=1
 
 ENV PATH="/opt/ffmpeg/bin:${PATH}"
