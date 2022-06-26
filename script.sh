@@ -79,6 +79,36 @@ function generate_dummy_mpeg_ts() {
     echo '------ ^^^^^^ FFmpeg generates MPEG-TS ^^^^^^'
 }
 
+function streamlink_record_pipe_ffmpeg_push_rtmp() {
+    echo '------ vvvvvv Streamlink record and pipe to FFmpeg and then RTMP vvvvvv'
+
+    set -u
+
+    # How to resize a video to make it smaller with FFmpeg - Super User
+    #   https://superuser.com/q/624563
+    # ffmpeg - Explanation of x264 tune - Super User
+    #   https://superuser.com/q/564402
+
+    streamlink \
+        --plugin-dirs='/SL-plugins' \
+        --record-and-pipe "${1}" \
+        --force \
+        --loglevel=trace \
+        "${EPLUS_JP_STREAM_URL}" \
+        "${EPLUS_JP_STREAM_QUALITY}" |
+        ffmpeg \
+            -re \
+            -i - \
+            -c:v 'libx264' -filter:v "scale=w=-1:h=${RTMP_HEIGHT}" -tune 'zerolatency' \
+            -c:a 'copy' \
+            -f 'flv' \
+            "${RTMP_TARGET}"
+
+    set +u
+
+    echo '------ ^^^^^^ Streamlink record and pipe to FFmpeg and then RTMP ^^^^^^'
+}
+
 # Streamlink #
 ##############
 
@@ -274,7 +304,9 @@ function main() {
         init_azure
     fi
 
-    if [[ -z "${NO_DOWNLOAD_STREAM}" ]]; then
+    if [[ -n "${RECORD_AND_PUSH_TO_RTMP}" ]]; then
+        streamlink_record_pipe_ffmpeg_push_rtmp "${output_ts_base_path}"
+    elif [[ -z "${NO_DOWNLOAD_STREAM}" ]]; then
         download_eplus_stream "${output_ts_base_path}"
     else
         generate_dummy_mpeg_ts "${output_ts_base_path}"
