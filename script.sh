@@ -49,10 +49,10 @@ function download_eplus_stream() {
     echo '------ ^^^^^^ Streamlink ^^^^^^'
 }
 
-function generate_dummy_mpeg_ts() {
+function generate_still_image_mpeg_ts() {
     # for test
 
-    echo '------ vvvvvv FFmpeg generates MPEG-TS vvvvvv'
+    echo '------ vvvvvv FFmpeg generates still image MPEG-TS vvvvvv'
 
     set -u
 
@@ -76,7 +76,7 @@ function generate_dummy_mpeg_ts() {
 
     set +u
 
-    echo '------ ^^^^^^ FFmpeg generates MPEG-TS ^^^^^^'
+    echo '------ ^^^^^^ FFmpeg generates still image MPEG-TS ^^^^^^'
 }
 
 # Streamlink #
@@ -277,7 +277,7 @@ function main() {
     if [[ -z "${NO_DOWNLOAD_STREAM}" ]]; then
         download_eplus_stream "${output_ts_base_path}"
     else
-        generate_dummy_mpeg_ts "${output_ts_base_path}"
+        generate_still_image_mpeg_ts "${output_ts_base_path}"
     fi
 
     if [[ -z "${NO_TRANSCODE}" ]]; then
