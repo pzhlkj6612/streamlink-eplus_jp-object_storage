@@ -188,47 +188,9 @@ spec:
         - mountPath: /SL-downloads
           name: SL-downloads
       env:
-        # base file name (required)
-        - name: OUTPUT_FILENAME_BASE
-          value: ""
-
-        # switches
-        - name: NO_DOWNLOAD_STREAM  # disable streamlink, generate a still image video.
-          value: ""
-        - name: NO_TRANSCODE        # disable FFmpeg transcode, generate a dummy video.
-          value: ""
-        - name: NO_S3               # disable s3cmd.
-          value: ""
-        - name: NO_AZURE            # disable azure-cli.
-          value: ""
-
-        # streamlink
-        - name: EPLUS_JP_STREAM_URL
-          value: ""
-        - name: EPLUS_JP_STREAM_QUALITY
-          value: ""
-
-        # s3cmd
-        - name: AWS_ACCESS_KEY_ID
-          value: ""
-        - name: AWS_SECRET_ACCESS_KEY
-          value: ""
-        - name: S3_BUCKET
-          value: ""
-        - name: S3_HOSTNAME
-          value: ""
-
-        # azure-cli
-        - name: AZURE_STORAGE_ACCOUNT
-          value: ""
-        - name: AZ_SP_APPID
-          value: ""
-        - name: AZ_SP_PASSWORD
-          value: ""
-        - name: AZ_SP_TENANT
-          value: ""
-        - name: AZ_STORAGE_CONTAINER_NAME
-          value: ""
+        # Please refer to the "Docker" section.
+        - name: # ...
+          value: # "..."
 
 ```
 
