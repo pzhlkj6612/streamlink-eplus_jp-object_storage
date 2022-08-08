@@ -37,10 +37,14 @@ Final files:
 # template:
 ${datetime}.${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}
 ${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}  # NO_AUTO_PREFIX_DATETIME
+${datetime}.${OUTPUT_FILENAME_BASE}.${md5}.{ts,mp4}  # NO_AUTO_FILESIZE
+${datetime}.${OUTPUT_FILENAME_BASE}.${size}.{ts,mp4}  # NO_AUTO_MD5
 
 # example:
 '20220605-040302+0100.liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'
 'liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'  # NO_AUTO_PREFIX_DATETIME
+'20220605-040302+0100.liella-2nd-Osaka-day2.0123456789abcdef0123456789abcdef.ts'  # NO_AUTO_FILESIZE
+'20220605-040302+0100.liella-2nd-Osaka-day2.123456789.ts'  # NO_AUTO_MD5
 
 ```
 
