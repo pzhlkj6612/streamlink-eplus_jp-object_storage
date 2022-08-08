@@ -122,8 +122,12 @@ services:
       - OUTPUT_FILENAME_BASE=
 
       # switches
-      - NO_DOWNLOAD_STREAM=  # disable streamlink, generate a still image video.
-      - NO_TRANSCODE=        # disable FFmpeg transcode, generate a dummy video.
+      - NO_DOWNLOAD_STREAM=  # disable streamlink.
+      - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video when "NO_DOWNLOAD_STREAM" is set.
+
+      - NO_TRANSCODE=        # disable FFmpeg transcode.
+      - GENERATE_DUMMY_MP4=  # generate a dummy MP4 file when "NO_TRANSCODE" is set.
+
       - NO_S3=               # disable s3cmd.
       - NO_AZURE=            # disable azure-cli.
 

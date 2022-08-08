@@ -276,13 +276,13 @@ function main() {
 
     if [[ -z "${NO_DOWNLOAD_STREAM}" ]]; then
         download_eplus_stream "${output_ts_base_path}"
-    else
+    elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
         generate_still_image_mpeg_ts "${output_ts_base_path}"
     fi
 
     if [[ -z "${NO_TRANSCODE}" ]]; then
         ffmpeg_transcode "${output_ts_base_path}" "${output_mp4_base_path}"
-    else
+    elif [[ -n "${GENERATE_DUMMY_MP4}" ]]; then
         generate_dummy_mp4 "${output_mp4_base_path}"
     fi
 
