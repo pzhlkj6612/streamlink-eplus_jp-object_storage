@@ -229,11 +229,12 @@ function obtain_calculate_rename_upload() {
 
     the_file_name="$(basename -- "${1}")"
     the_file_dir="${1%/${the_file_name}}"
+    the_file_ext="${the_file_name##*.}"
 
     the_file_byte_size="$(du -b "${1}" | awk '{ print $1 }')"
     the_file_md5="$(md5sum "${1}" | awk '{ print $1 }')"
 
-    the_file_final_name="${the_file_name%.*}.${the_file_byte_size}.${the_file_md5}.${the_file_name##*.}"
+    the_file_final_name="${the_file_name%.*}.${the_file_byte_size}.${the_file_md5}.${the_file_ext}"
     the_file_final_path="${the_file_dir}/${the_file_final_name}"
 
     echo "the final file path:    '${the_file_final_path}'"
