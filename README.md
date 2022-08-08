@@ -23,9 +23,11 @@ Intermediate files. Those files will be renamed to "final files" before being up
 ```shell
 # template:
 ${datetime}.${OUTPUT_FILENAME_BASE}.{ts,mp4}
+${OUTPUT_FILENAME_BASE}.{ts,mp4}  # NO_AUTO_PREFIX_DATETIME
 
 # example:
 '20220605-040302+0100.liella-2nd-Osaka-day2.ts'
+'liella-2nd-Osaka-day2.ts'  # NO_AUTO_PREFIX_DATETIME
 
 ```
 
@@ -34,9 +36,11 @@ Final files:
 ```shell
 # template:
 ${datetime}.${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}
+${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}  # NO_AUTO_PREFIX_DATETIME
 
 # example:
 '20220605-040302+0100.liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'
+'liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'  # NO_AUTO_PREFIX_DATETIME
 
 ```
 
@@ -120,6 +124,9 @@ services:
     environment:
       # base file name (required)
       - OUTPUT_FILENAME_BASE=
+
+      # output file name configuration
+      - NO_AUTO_PREFIX_DATETIME=
 
       # switches
       - NO_DOWNLOAD_STREAM=  # disable streamlink.

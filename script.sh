@@ -262,9 +262,15 @@ function obtain_calculate_rename_upload() {
 function main() {
     test_variable 'OUTPUT_FILENAME_BASE'
 
-    output_ts_base_path="/SL-downloads/${the_datetime}.${OUTPUT_FILENAME_BASE}.ts"
+    output_file_basename="${OUTPUT_FILENAME_BASE}"
 
-    output_mp4_base_path="/SL-downloads/${the_datetime}.${OUTPUT_FILENAME_BASE}.mp4"
+    if [[ -z "${NO_AUTO_PREFIX_DATETIME}" ]]; then
+        output_file_basename="${the_datetime}.${output_file_basename}"
+    fi
+
+    output_ts_base_path="/SL-downloads/${output_file_basename}.ts"
+
+    output_mp4_base_path="/SL-downloads/${output_file_basename}.mp4"
 
     if [[ -z "${NO_S3}" ]]; then
         init_s3
