@@ -24,15 +24,8 @@ function test_variable() {
 ##############
 # Streamlink #
 
-function test_streamlink_variables() {
-    test_variable 'EPLUS_JP_STREAM_URL'
-    test_variable 'EPLUS_JP_STREAM_QUALITY'
-}
-
 function download_eplus_stream() {
     echo '------ vvvvvv Streamlink vvvvvv'
-
-    test_streamlink_variables
 
     set -u
 
@@ -42,7 +35,7 @@ function download_eplus_stream() {
         --force \
         --loglevel=trace \
         "${EPLUS_JP_STREAM_URL}" \
-        "${EPLUS_JP_STREAM_QUALITY}"
+        "${EPLUS_JP_STREAM_QUALITY:-'best'}"
 
     set +u
 
@@ -293,7 +286,7 @@ function main() {
         init_azure
     fi
 
-    if [[ -z "${NO_DOWNLOAD_STREAM}" ]]; then
+    if [[ -n "${EPLUS_JP_STREAM_URL}" ]]; then
         download_eplus_stream "${output_ts_base_path}"
     elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
         generate_still_image_mpeg_ts "${output_ts_base_path}"

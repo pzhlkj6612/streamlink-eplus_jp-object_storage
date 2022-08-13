@@ -138,9 +138,8 @@ services:
       # only one input allowed; streamlink has the highest priority.
 
       # streamlink
-      - NO_DOWNLOAD_STREAM=  # disable streamlink.
-      - EPLUS_JP_STREAM_URL=
-      - EPLUS_JP_STREAM_QUALITY=
+      - EPLUS_JP_STREAM_URL=      # enable streamlink.
+      - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
 
       # ffmpeg
       - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video.
