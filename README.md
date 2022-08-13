@@ -131,6 +131,8 @@ services:
 
       # output file name configuration
       - NO_AUTO_PREFIX_DATETIME=
+      - NO_AUTO_FILESIZE=
+      - NO_AUTO_MD5=
 
       # switches
       - NO_DOWNLOAD_STREAM=  # disable streamlink.
