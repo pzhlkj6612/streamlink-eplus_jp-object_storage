@@ -249,7 +249,11 @@ function obtain_calculate_rename_upload() {
 
     echo "the final file path:    '${the_file_final_path}'"
 
-    mv "${1}" "${the_file_final_path}"
+    if [[ -f "${the_file_final_path}" ]]; then
+        echo 'The existing file has not been renamed.'
+    else
+        mv "${1}" "${the_file_final_path}"
+    fi
 
     if [[ -z "${NO_S3}" ]]; then
         upload_to_s3 "${the_file_final_path}"
