@@ -157,6 +157,9 @@ services:
       # file
       # no control, the stream will be written to a local file.
 
+      # rtmp
+      - RTMP_TARGET_URL=     # enable RTMP streaming.
+
       # MP4 output control
 
       - NO_TRANSCODE=        # disable FFmpeg transcode.

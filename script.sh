@@ -65,6 +65,25 @@ ffmpeg_online_image_generate_still_image_mpegts_video_stdout_command=(
         '-'
 )
 
+ffmpeg_stdin_mpegts_transcode_flv_rtmp_no_target_url_partial_command=(
+    # ffmpeg - Explanation of x264 tune - Super User
+    #   https://superuser.com/q/564402
+
+    'ffmpeg'
+        "${ffmpeg_common_global_arguments[@]}"
+        '-re'
+        '-f' 'mpegts'
+        '-i' '-'
+        '-c:a' 'copy'
+        '-c:v' 'libx264'
+            '-preset' 'ultrafast'
+            '-tune' 'zerolatency'
+            '-profile:v' 'baseline'
+        '-f' 'flv'
+            '-flvflags' 'no_duration_filesize'
+        # 'URL'
+)
+
 # Commands #
 ############
 
@@ -148,6 +167,24 @@ function process_stream_and_video() {
         dd &
 
         out_pipes+=("${copy_ts_pipe}")
+
+    fi
+
+    if [[ -n "${RTMP_TARGET_URL}" ]]; then
+        # pipe --(.ts)-> ffmpeg --(.flv)-> rtmp
+
+        ffmpeg_stdin_mpegts_transcode_flv_rtmp_command=(
+            "${ffmpeg_stdin_mpegts_transcode_flv_rtmp_no_target_url_partial_command[@]}"
+            "${RTMP_TARGET_URL}"
+        )
+
+        rtmp_ts_pipe="$(mktemp -u)"
+        mkfifo --mode=600 "${rtmp_ts_pipe}"
+
+        0<"${rtmp_ts_pipe}" \
+        "${ffmpeg_stdin_mpegts_transcode_flv_rtmp_command[@]}" &
+
+        out_pipes+=("${rtmp_ts_pipe}")
 
     fi
 
