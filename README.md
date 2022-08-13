@@ -134,19 +134,32 @@ services:
       - NO_AUTO_FILESIZE=
       - NO_AUTO_MD5=
 
-      # switches
+      # MPEG-TS input control
+      # only one input allowed; streamlink has the highest priority.
+
+      # streamlink
       - NO_DOWNLOAD_STREAM=  # disable streamlink.
-      - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video when "NO_DOWNLOAD_STREAM" is set.
+      - EPLUS_JP_STREAM_URL=
+      - EPLUS_JP_STREAM_QUALITY=
+
+      # ffmpeg
+      - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video.
+
+      # MPEG-TS output control
+
+      # file
+      # no control, the stream will be written to a local file.
+
+      # MP4 output control
 
       - NO_TRANSCODE=        # disable FFmpeg transcode.
+
       - GENERATE_DUMMY_MP4=  # generate a dummy MP4 file when "NO_TRANSCODE" is set.
+
+      # uploading control
 
       - NO_S3=               # disable s3cmd.
       - NO_AZURE=            # disable azure-cli.
-
-      # streamlink
-      - EPLUS_JP_STREAM_URL=
-      - EPLUS_JP_STREAM_QUALITY=
 
       # s3cmd
       - AWS_ACCESS_KEY_ID=
