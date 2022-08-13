@@ -83,7 +83,14 @@ function process_stream_and_video() {
     in_pipe="$(mktemp -u)"
     mkfifo --mode=600 "${in_pipe}"
 
-    if [[ -n "${EPLUS_JP_STREAM_URL}" ]]; then
+    if [[ -n "${USE_EXISTING_MPEG_TS_VIDEO_FILE}" ]]; then
+        # (.ts)-> pipe
+
+        0<"${1}" \
+        1>"${in_pipe}" \
+        dd &
+
+    elif [[ -n "${EPLUS_JP_STREAM_URL}" ]]; then
         # streamlink --(.ts)-> pipe
 
         streamlink_record_stdout_command=(
@@ -125,7 +132,7 @@ function process_stream_and_video() {
 
     out_pipes=()
 
-    if true; then
+    if [[ -z "${USE_EXISTING_MPEG_TS_VIDEO_FILE}" ]]; then
         # pipe ->(.ts)
 
         if [[ -f "${1}" ]]; then

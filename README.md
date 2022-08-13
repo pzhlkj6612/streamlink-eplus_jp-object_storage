@@ -135,7 +135,11 @@ services:
       - NO_AUTO_MD5=
 
       # MPEG-TS input control
-      # only one input allowed; streamlink has the highest priority.
+      # only one input allowed; using file has the highest priority.
+
+      # file
+      # does NOT imply "NO_AUTO_PREFIX_DATETIME", "NO_AUTO_FILESIZE" and "NO_AUTO_MD5".
+      - USE_EXISTING_MPEG_TS_VIDEO_FILE=
 
       # streamlink
       - EPLUS_JP_STREAM_URL=      # enable streamlink.
