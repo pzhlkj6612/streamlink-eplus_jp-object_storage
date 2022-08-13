@@ -141,6 +141,9 @@ services:
       - EPLUS_JP_STREAM_URL=      # enable streamlink.
       - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
 
+      # direct download
+      - MPEG_TS_VIDEO_FILE_URL=  # download a MPEG-TS video.
+
       # ffmpeg
       - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video.
 

@@ -33,6 +33,13 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
         # '--default-stream'
 )
 
+curl_download_stdout_no_url_partial_command=(
+    'curl'
+        '--verbose' '--trace-time'
+        '--location'
+        # 'URL'
+)
+
 ffmpeg_common_global_arguments=(
     '-loglevel' 'level+info'
 )
@@ -87,6 +94,17 @@ function process_stream_and_video() {
 
         1>"${in_pipe}" \
         "${streamlink_record_stdout_command[@]}" &
+
+    elif [[ -n "${MPEG_TS_VIDEO_FILE_URL}" ]]; then
+        # curl --(.ts)-> pipe
+
+        curl_download_stdout_command=(
+            "${curl_download_stdout_no_url_partial_command[@]}"
+            "${MPEG_TS_VIDEO_FILE_URL}"
+        )
+
+        1>"${in_pipe}" \
+        "${curl_download_stdout_command[@]}" &
 
     elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
         # ffmpeg --(.ts)-> pipe
