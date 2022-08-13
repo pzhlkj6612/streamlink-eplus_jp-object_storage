@@ -145,6 +145,7 @@ services:
       - GENERATE_STILL_IMAGE_MPEG_TS=  # generate a still image MPEG-TS video.
 
       # MPEG-TS output control
+      # multiple outputs supported.
 
       # file
       # no control, the stream will be written to a local file.

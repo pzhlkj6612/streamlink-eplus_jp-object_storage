@@ -21,34 +21,23 @@ function test_variable() {
 # Utilities #
 #############
 
-##############
-# Streamlink #
+############
+# Commands #
 
-function download_eplus_stream() {
-    echo '------ vvvvvv Streamlink vvvvvv'
+streamlink_record_stdout_no_url_no_default_stream_partial_command=(
+    'streamlink'
+        '--plugin-dirs=''/SL-plugins'
+        '--stdout'
+        '--loglevel=trace'
+        # '--url'
+        # '--default-stream'
+)
 
-    set -u
+ffmpeg_common_global_arguments=(
+    '-loglevel' 'level+info'
+)
 
-    streamlink \
-        --plugin-dirs='/SL-plugins' \
-        --output "${1}" \
-        --force \
-        --loglevel=trace \
-        "${EPLUS_JP_STREAM_URL}" \
-        "${EPLUS_JP_STREAM_QUALITY:-'best'}"
-
-    set +u
-
-    echo '------ ^^^^^^ Streamlink ^^^^^^'
-}
-
-function generate_still_image_mpeg_ts() {
-    # for test
-
-    echo '------ vvvvvv FFmpeg generates still image MPEG-TS vvvvvv'
-
-    set -u
-
+ffmpeg_online_image_generate_still_image_mpegts_video_stdout_command=(
     # Creating a video from a single image for a specific duration in ffmpeg - Stack Overflow
     #   https://stackoverflow.com/q/25891342
     # [FFmpeg-user] How to specify duration for an input with pipe protocol
@@ -58,57 +47,158 @@ function generate_still_image_mpeg_ts() {
     #   http://ffmpeg.org/pipermail/ffmpeg-user/2019-February/043175.html
     #   http://ffmpeg.org/pipermail/ffmpeg-user/2019-February/043176.html
 
-    curl -L 'https://www.lovelive-anime.jp/yuigaoka/img/clear.jpg' |
-        ffmpeg \
-            -i - \
-            -c:v 'libopenh264' \
-            -filter:v 'loop=loop=-1:size=1' \
-            -t '00:00:04' \
-            -r 2 \
-            "${1}"
+    'ffmpeg'
+        "${ffmpeg_common_global_arguments[@]}"
+        '-i' 'https://www.lovelive-anime.jp/yuigaoka/img/clear.jpg'
+        '-c:v' 'libopenh264'
+        '-filter:v' 'loop=loop=-1:size=1'
+        '-t' '00:00:04'
+        '-r' '2'
+        '-f' 'mpegts'
+        '-'
+)
 
-    set +u
+# Commands #
+############
 
-    echo '------ ^^^^^^ FFmpeg generates still image MPEG-TS ^^^^^^'
+#############
+# Processor #
+
+#
+# $1: output_ts_base_path
+# $2: output_mp4_base_path
+#
+function process_stream_and_video() {
+    echo '------ vvvvvv process stream and video vvvvvv'
+
+    # Prepare input
+
+    in_pipe="$(mktemp -u)"
+    mkfifo --mode=600 "${in_pipe}"
+
+    if [[ -n "${EPLUS_JP_STREAM_URL}" ]]; then
+        # streamlink --(.ts)-> pipe
+
+        streamlink_record_stdout_command=(
+            "${streamlink_record_stdout_no_url_no_default_stream_partial_command[@]}"
+            '--url' "${EPLUS_JP_STREAM_URL}"
+            '--default-stream' "${EPLUS_JP_STREAM_QUALITY:-'best'}"
+        )
+
+        1>"${in_pipe}" \
+        "${streamlink_record_stdout_command[@]}" &
+
+    elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
+        # ffmpeg --(.ts)-> pipe
+
+        1>"${in_pipe}" \
+        "${ffmpeg_online_image_generate_still_image_mpegts_video_stdout_command[@]}" &
+
+    fi
+
+    in_pid="$!"
+
+    if [[ -z "${in_pid}" ]]; then
+        echo "No input specified."
+        exit 2
+    fi
+
+    # Prepare outputs
+
+    out_pipes=()
+
+    if true; then
+        # pipe ->(.ts)
+
+        if [[ -f "${1}" ]]; then
+            echo "MPEG-TS file exists, no overwriting it."
+            exit 3
+        fi
+
+        copy_ts_pipe="$(mktemp -u)"
+        mkfifo --mode=600 "${copy_ts_pipe}"
+
+        0<"${copy_ts_pipe}" \
+        1>"${1}" \
+        dd &
+
+        out_pipes+=("${copy_ts_pipe}")
+
+    fi
+
+    # to T, or not to T.
+
+    output_number="${#out_pipes[@]}"
+
+    echo "The number of outputs = ${output_number}"
+
+    if [[ "${output_number}" -gt '0' ]]; then
+        # do piping
+
+        the_last_out_pipe="${out_pipes[-1]}"
+        remaining_out_pipes=("${out_pipes[@]:0:$((${#out_pipes[@]} - 1))}")
+
+        0<"${in_pipe}" \
+        1>"${the_last_out_pipe}" \
+        tee "${remaining_out_pipes[@]}" &
+
+        # list all background processes
+        jobs
+
+        # wait for the input process to be finished
+        wait "${in_pid}"
+
+        # wait for all other background processes
+        wait
+
+        rm "${out_pipes[@]}"
+
+    else
+        # remove the sender of `in_pipe`.
+
+        kill "${in_pid}"
+
+    fi
+
+    # Cleanup
+
+    rm "${in_pipe}"
+
+    # Produce MP4
+
+    if [[ -z "${NO_TRANSCODE}" ]]; then
+        # (.ts)-> ffmpeg ->(.mp4)
+        # should be a seekable MP4 video
+
+        ffmpeg_mpegts_file_copy_mp4_file_command=(
+            'ffmpeg'
+                "${ffmpeg_common_global_arguments[@]}"
+                '-f' 'mpegts'
+                '-i' "${1}"
+                '-c' 'copy'
+                '-f' 'mp4'
+                "${2}"
+        )
+
+        "${ffmpeg_mpegts_file_copy_mp4_file_command[@]}"
+
+    elif [[ -n "${GENERATE_DUMMY_MP4}" ]]; then
+        # text ->(.mp4)
+
+        if [[ -f "${2}" ]]; then
+            echo "MP4 file exists, no overwriting it."
+            exit 4
+        fi
+
+        echo "${2}" 1>"${2}"
+
+    fi
+
+    echo '------ ^^^^^^ process stream and video ^^^^^^'
 }
 
-# Streamlink #
-##############
-
-##########
-# FFmpeg #
-
-function ffmpeg_transcode() {
-    echo '------ vvvvvv FFmpeg transcode vvvvvv'
-
-    set -u
-
-    ffmpeg \
-        -i "${1}" \
-        -c copy \
-        "${2}"
-
-    set +u
-
-    echo '------ ^^^^^^ FFmpeg transcode ^^^^^^'
-}
-
-function generate_dummy_mp4() {
-    # for test
-
-    echo '------ vvvvvv Generate dummy MP4 vvvvvv'
-
-    set -u
-
-    echo "${1}" >"${1}"
-
-    set +u
-
-    echo '------ ^^^^^^ Generate dummy MP4 ^^^^^^'
-}
-
-# FFmpeg #
-##########
+# Processor #
+#############
 
 #########
 # S3cmd #
@@ -286,17 +376,7 @@ function main() {
         init_azure
     fi
 
-    if [[ -n "${EPLUS_JP_STREAM_URL}" ]]; then
-        download_eplus_stream "${output_ts_base_path}"
-    elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
-        generate_still_image_mpeg_ts "${output_ts_base_path}"
-    fi
-
-    if [[ -z "${NO_TRANSCODE}" ]]; then
-        ffmpeg_transcode "${output_ts_base_path}" "${output_mp4_base_path}"
-    elif [[ -n "${GENERATE_DUMMY_MP4}" ]]; then
-        generate_dummy_mp4 "${output_mp4_base_path}"
-    fi
+    process_stream_and_video "${output_ts_base_path}" "${output_mp4_base_path}"
 
     obtain_calculate_rename_upload "${output_ts_base_path}"
 
