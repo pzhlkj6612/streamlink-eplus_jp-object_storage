@@ -115,7 +115,7 @@ function process_stream_and_video() {
         streamlink_record_stdout_command=(
             "${streamlink_record_stdout_no_url_no_default_stream_partial_command[@]}"
             '--url' "${EPLUS_JP_STREAM_URL}"
-            '--default-stream' "${EPLUS_JP_STREAM_QUALITY:-'best'}"
+            '--default-stream' "${EPLUS_JP_STREAM_QUALITY:-best}"
         )
 
         1>"${in_pipe}" \
