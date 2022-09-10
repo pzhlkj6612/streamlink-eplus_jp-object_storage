@@ -139,6 +139,7 @@ services:
 
       # file
       # does NOT imply "NO_AUTO_PREFIX_DATETIME", "NO_AUTO_FILESIZE" and "NO_AUTO_MD5".
+      # does imply "NO_DOWNLOAD_TS".
       - USE_EXISTING_MPEG_TS_VIDEO_FILE=
 
       # streamlink
@@ -155,7 +156,7 @@ services:
       # multiple outputs supported.
 
       # file
-      # no control, the stream will be written to a local file.
+      - NO_DOWNLOAD_TS=  # do not save the MPEG-TS file.
 
       # rtmp
       - RTMP_TARGET_URL=     # enable RTMP streaming.

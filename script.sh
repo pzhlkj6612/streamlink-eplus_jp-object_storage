@@ -151,7 +151,11 @@ function process_stream_and_video() {
 
     out_pipes=()
 
-    if [[ -z "${USE_EXISTING_MPEG_TS_VIDEO_FILE}" ]]; then
+    if [[ -n "${USE_EXISTING_MPEG_TS_VIDEO_FILE}" ]]; then
+        NO_DOWNLOAD_TS=1
+    fi
+
+    if [[ -z "${NO_DOWNLOAD_TS}" ]]; then
         # pipe ->(.ts)
 
         if [[ -f "${1}" ]]; then
