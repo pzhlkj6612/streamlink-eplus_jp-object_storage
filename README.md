@@ -183,6 +183,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=
       - S3_BUCKET=
       - S3_HOSTNAME=
+      - S3CMD_MULTIPART_CHUNK_SIZE_MB=  # "--multipart-chunk-size-mb", 15 by default.
 
       # azure-cli
       - AZURE_STORAGE_ACCOUNT=

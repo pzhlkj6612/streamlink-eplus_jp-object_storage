@@ -300,6 +300,7 @@ function upload_to_s3() {
         --host="${S3_HOSTNAME}" \
         --host-bucket='%(bucket)s.'"${S3_HOSTNAME}" \
         --progress \
+        --multipart-chunk-size-mb="${S3CMD_MULTIPART_CHUNK_SIZE_MB:-15}" \
         put "${1}" "${S3_BUCKET}"
 
     set +u
