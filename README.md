@@ -8,6 +8,12 @@
 - Transcode the downloaded TS file to MP4 via FFmpeg.
 - Upload both the TS and MP4 files to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
 
+## CAUTION
+
+Due to the program logic of eplus.jp, the UNPUBLISHED or SHOULD-NEVER-BE-PUBLISHED scene (rehearsal, for example) can be retrieved and fetched before the show officially starts.
+
+DO NOT use this image earlier than the start time, please.
+
 ## Details
 
 ### Storage requirement
