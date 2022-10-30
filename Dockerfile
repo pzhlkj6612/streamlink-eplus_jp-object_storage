@@ -21,7 +21,7 @@ RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
         --upgrade \
-        'https://github.com/streamlink/streamlink/archive/b7a8da256f53c77e681b4253688e50e2191f64af.zip'
+        'https://github.com/streamlink/streamlink/archive/47d170beb23e59caee0e4098145a637cbd52c261.zip'
 
 # git - How to shallow clone a specific commit with depth 1? - Stack Overflow
 #   https://stackoverflow.com/a/43136160
