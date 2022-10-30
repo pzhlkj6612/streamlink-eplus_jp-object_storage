@@ -11,7 +11,7 @@ RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
         --upgrade \
-        'https://github.com/s3tools/s3cmd/archive/a1bb8431456ac16c5dd0640a08865ca223838872.zip'
+        'https://github.com/s3tools/s3cmd/archive/bff5ad5ccbe6c156118cdb6f4632dd454f4a7cdc.zip'
 
 RUN curl -L 'https://aka.ms/InstallAzureCLIDeb' | bash
 
