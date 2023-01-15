@@ -6,7 +6,7 @@ set -o pipefail
 # bash - YYYY-MM-DD format date in shell script - Stack Overflow
 #   https://stackoverflow.com/a/1401495
 
-printf -v the_datetime '%(%Y%m%d-%H%M%S%z)T' -1
+TZ=UTC printf -v the_datetime '%(%Y%m%dT%H%M%SZ)T' -1
 
 #############
 # Utilities #
