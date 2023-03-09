@@ -24,11 +24,20 @@ function test_variable() {
 ############
 # Commands #
 
+if [[ "${STREAMLINK_RETRY_TOTAL_SECONDS:-0}" -gt 0 ]]; then
+    # at least one time
+    retry_attempt_times=$(( "${STREAMLINK_RETRY_TOTAL_SECONDS}" / 42 + ("${STREAMLINK_RETRY_TOTAL_SECONDS}" % 42 == 0 ? 0 : 1) ))
+else
+    retry_attempt_times=0
+fi
+
 streamlink_record_stdout_no_url_no_default_stream_partial_command=(
     'streamlink'
         '--plugin-dirs=''/SL-plugins'
         '--stdout'
         '--loglevel=trace'
+        '--retry-streams' '42'
+        '--retry-max' "${retry_attempt_times}"
         # '--url'
         # '--default-stream'
 )

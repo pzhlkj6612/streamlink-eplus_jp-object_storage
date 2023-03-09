@@ -151,6 +151,7 @@ services:
       # streamlink
       - EPLUS_JP_STREAM_URL=      # enable streamlink.
       - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
+      - STREAMLINK_RETRY_TOTAL_SECONDS=  # 42 seconds between attempts, 0 second (no retry) by default.
 
       # direct download
       - MPEG_TS_VIDEO_FILE_URL=  # download a MPEG-TS video.
