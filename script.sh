@@ -38,6 +38,7 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
         '--loglevel=trace'
         '--retry-streams' '42'
         '--retry-max' "${retry_attempt_times}"
+        '--hls-start-offset' "${STREAMLINK_HLS_START_OFFSET:-00:00:00}"
         # '--url'
         # '--default-stream'
 )
