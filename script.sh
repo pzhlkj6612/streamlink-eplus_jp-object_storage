@@ -8,6 +8,8 @@ set -o pipefail
 
 TZ=UTC printf -v the_datetime '%(%Y%m%dT%H%M%SZ)T' -1
 
+echo "------ the_datetime = ${the_datetime}"
+
 #############
 # Utilities #
 
