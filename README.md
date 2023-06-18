@@ -8,17 +8,11 @@
 - Transcode the downloaded TS file to MP4 via FFmpeg.
 - Upload both the TS and MP4 files to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
 
-## CAUTION
-
-Due to the program logic of eplus.jp, the UNPUBLISHED or SHOULD-NEVER-BE-PUBLISHED scene (rehearsal, for example) can be retrieved and fetched before the show officially starts.
-
-DO NOT use this image earlier than the start time, please.
-
 ## Details
 
 ### Storage requirement
 
-For lives of Liella, the size of a 4-hour MPEG-TS record with the best quality is about 9.88 GB (9.2 GiB). Since we may transcode MPEG-TS to MP4 (a bit smaller) and keep both files, 20 GB free disk space is required.
+For a 4-hour live event, the size of a MPEG-TS recording with the best quality is about 9.88 GB (9.2 GiB). Since we may transcode MPEG-TS to MP4 (a bit smaller) and keep both files, 20 GB free disk space is required.
 
 ### Output
 
@@ -28,12 +22,12 @@ Intermediate files. Those files will be renamed to "final files" before being up
 
 ```shell
 # template:
-${datetime}.${OUTPUT_FILENAME_BASE}.{ts,mp4}
-${OUTPUT_FILENAME_BASE}.{ts,mp4}  # NO_AUTO_PREFIX_DATETIME
+${datetime}.${OUTPUT_FILENAME_BASE}.{ts,mp4} # full
+${OUTPUT_FILENAME_BASE}.{ts,mp4}             # NO_AUTO_PREFIX_DATETIME
 
 # example:
-'20220605T040302Z.liella-2nd-Osaka-day2.ts'
-'liella-2nd-Osaka-day2.ts'  # NO_AUTO_PREFIX_DATETIME
+'20220605T040302Z.name-1st-Otoyk-day0.ts' # full
+'name-1st-Otoyk-day0.ts'                  # NO_AUTO_PREFIX_DATETIME
 
 ```
 
@@ -41,16 +35,16 @@ Final files:
 
 ```shell
 # template:
-${datetime}.${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}
-${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}  # NO_AUTO_PREFIX_DATETIME
-${datetime}.${OUTPUT_FILENAME_BASE}.${md5}.{ts,mp4}  # NO_AUTO_FILESIZE
-${datetime}.${OUTPUT_FILENAME_BASE}.${size}.{ts,mp4}  # NO_AUTO_MD5
+${datetime}.${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4} # full
+${OUTPUT_FILENAME_BASE}.${size}.${md5}.{ts,mp4}             # NO_AUTO_PREFIX_DATETIME
+${datetime}.${OUTPUT_FILENAME_BASE}.${md5}.{ts,mp4}         # NO_AUTO_FILESIZE
+${datetime}.${OUTPUT_FILENAME_BASE}.${size}.{ts,mp4}        # NO_AUTO_MD5
 
 # example:
-'20220605T040302Z.liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'
-'liella-2nd-Osaka-day2.123456789.0123456789abcdef0123456789abcdef.ts'  # NO_AUTO_PREFIX_DATETIME
-'20220605T040302Z.liella-2nd-Osaka-day2.0123456789abcdef0123456789abcdef.ts'  # NO_AUTO_FILESIZE
-'20220605T040302Z.liella-2nd-Osaka-day2.123456789.ts'  # NO_AUTO_MD5
+'20220605T040302Z.name-1st-Otoyk-day0.123456789.0123456789abcdef0123456789abcdef.ts' # full
+'name-1st-Otoyk-day0.123456789.0123456789abcdef0123456789abcdef.ts'                  # NO_AUTO_PREFIX_DATETIME
+'20220605T040302Z.name-1st-Otoyk-day0.0123456789abcdef0123456789abcdef.ts'           # NO_AUTO_FILESIZE
+'20220605T040302Z.name-1st-Otoyk-day0.123456789.ts'                                  # NO_AUTO_MD5
 
 ```
 
