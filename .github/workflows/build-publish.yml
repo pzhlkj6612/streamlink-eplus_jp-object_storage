@@ -53,30 +53,13 @@ jobs:
             ${{ github.repository_owner }}/${{ steps.repo-name.outputs.output }}
             ghcr.io/${{ github.repository }}
             registry.cn-hangzhou.aliyuncs.com/github_actions-pzhlkj6612/${{ steps.repo-name.outputs.output }}
+          tags: ${{ github.event_name == 'pull_request' && 'unstable' || (github.event_name == 'push' && 'latest' || '') }}
       -
-        name: 'Build and push Docker images (release: named tag & latest)'
+        name: Build and push Docker images
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
         if: ${{ github.event_name == 'release' }}
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-      -
-        name: 'Build and push Docker images (push: latest)'
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
-        if: ${{ github.event_name == 'push' }}
-        with:
-          context: .
-          push: true
-          tags: latest
-          labels: ${{ steps.meta.outputs.labels }}
-      -
-        name: 'Build and push Docker images (pull_request: unstable)'
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
-        if: ${{ github.event_name == 'pull_request' }}
-        with:
-          context: .
-          push: true
-          tags: unstable
           labels: ${{ steps.meta.outputs.labels }}
