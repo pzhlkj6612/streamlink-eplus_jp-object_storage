@@ -2,6 +2,9 @@
 *.yml
 *.yaml
 
+# Workflow
+!.github/workflows/*.yml
+
 # Downloaded or generated videos
 *.ts
 *.mp4

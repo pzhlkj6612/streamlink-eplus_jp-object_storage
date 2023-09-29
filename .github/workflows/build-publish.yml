@@ -7,6 +7,9 @@ name: Build and publish
 on:
   release:
     types: [published]
+  pull_request:
+  push:
+    branches: [mian]
 
 jobs:
   build_and_publish:
@@ -35,6 +38,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       -
+        name: Log in to ACR
+        uses: docker/login-action@dd4fa0671be5250ee6f50aedf4cb05514abda2c7  # v1.14.1
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      -
         name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@e5622373a38e60fb6d795a4421e56882f2d7a681  # v3.6.2
@@ -42,11 +52,31 @@ jobs:
           images: |
             ${{ github.repository_owner }}/${{ steps.repo-name.outputs.output }}
             ghcr.io/${{ github.repository }}
+            registry.cn-hangzhou.aliyuncs.com/github_actions-pzhlkj6612/${{ steps.repo-name.outputs.output }}
       -
-        name: Build and push Docker images
+        name: 'Build and push Docker images (release: named tag & latest)'
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
+        if: ${{ github.event_name == 'release' }}
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      -
+        name: 'Build and push Docker images (push: latest)'
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
+        if: ${{ github.event_name == 'push' }}
+        with:
+          context: .
+          push: true
+          tags: latest
+          labels: ${{ steps.meta.outputs.labels }}
+      -
+        name: 'Build and push Docker images (pull_request: unstable)'
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a  # v2.10.0
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          context: .
+          push: true
+          tags: unstable
           labels: ${{ steps.meta.outputs.labels }}
