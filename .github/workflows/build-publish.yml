@@ -19,7 +19,7 @@ jobs:
       -
         name: Get the name of this repo
         id: repo-name
-        run: echo "::set-output name=output::${GITHUB_REPOSITORY#*/}"
+        run: echo "output=${GITHUB_REPOSITORY#*/}" >> $GITHUB_OUTPUT
       -
         name: Check out the repo
         uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608  # v4.1.0
