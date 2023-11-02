@@ -46,6 +46,16 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
         # '--default-stream'
 )
 
+ytdlp_record_stdout_no_url_no_format_partial_command=(
+    'yt-dlp'
+        '--output', '-',
+        '--verbose'
+        '--wait-for-video' "${YTDLP_WAIT_FOR_VIDEO:-19-26}"
+        '--buffer-size' "${YTDLP_BUFFER_SIZE:-200M}"
+        # '--format'
+        # 'URL'
+)
+
 curl_download_stdout_no_url_partial_command=(
     'curl'
         '--verbose' '--trace-time'
@@ -133,6 +143,18 @@ function process_stream_and_video() {
 
         1>"${in_pipe}" \
         "${streamlink_record_stdout_command[@]}" &
+
+    elif [[ -n "${YTDLP_STREAM_URL}" ]]; then
+        # yt-dlp --(.ts)-> pipe
+
+        ytdlp_record_stdout_command=(
+            "${ytdlp_record_stdout_no_url_no_format_partial_command[@]}"
+            '--format' "${YTDLP_QUALITY:-bestvideo*+bestaudio/best}"
+            "${YTDLP_STREAM_URL}"
+        )
+
+        1>"${in_pipe}" \
+        "${ytdlp_record_stdout_command[@]}" &
 
     elif [[ -n "${MPEG_TS_VIDEO_FILE_URL}" ]]; then
         # curl --(.ts)-> pipe

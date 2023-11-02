@@ -4,7 +4,7 @@
 
 ## What does this docker image do
 
-- Download the live streaming or VOD from [eplus - Japan most famous ticket play-guide](https://ib.eplus.jp/) via Streamlink.
+- Download the live streaming or VOD from [eplus - Japan most famous ticket play-guide](https://ib.eplus.jp/) via Streamlink or yt-dlp.
 - Transcode the downloaded TS file to MP4 via FFmpeg.
 - Upload both the TS and MP4 files to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
 
@@ -149,6 +149,12 @@ services:
       - STREAMLINK_RINGBUFFER_SIZE=  # "--ringbuffer-size", 200M by default.
       - STREAMLINK_HLS_START_OFFSET=  # "--hls-start-offset", 00:00:00 by default.
 
+      # yt-dlp
+      - YTDLP_STREAM_URL=      # enable yt-dlp.
+      - YTDLP_QUALITY=         # "--format", "bestvideo*+bestaudio/best" by default.
+      - YTDLP_WAIT_FOR_VIDEO=  # "--wait-for-video", "19-26" by default.
+      - YTDLP_BUFFER_SIZE=     # "--buffer-size", 200M by default.
+
       # direct download
       - MPEG_TS_VIDEO_FILE_URL=  # download a MPEG-TS video.
 
@@ -263,6 +269,7 @@ $ podman build --tag ${tag} .
   - [s3tools/s3cmd](https://github.com/s3tools/s3cmd).
   - [Azure/azure-cli](https://github.com/Azure/azure-cli).
   - [streamlink/streamlink](https://github.com/streamlink/streamlink) and [pmrowla/streamlink-plugins](https://github.com/pmrowla/streamlink-plugins).
+  - [yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp)
   - [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds).
   - I'm using [shell-format - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format) to format my bash shell script.
 - Platforms:
