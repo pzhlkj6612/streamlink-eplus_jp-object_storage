@@ -49,7 +49,7 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
 
 ytdlp_record_stdout_no_url_no_format_partial_command=(
     'yt-dlp'
-        '--output', '-',
+        '--output' '-'
         '--verbose'
         '--wait-for-video' "${YTDLP_WAIT_FOR_VIDEO:-19-26}"
         '--buffer-size' "${YTDLP_BUFFER_SIZE:-200M}"
