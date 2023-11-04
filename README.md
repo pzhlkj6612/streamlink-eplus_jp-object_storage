@@ -125,6 +125,7 @@ services:
     image: docker.io/pzhlkj6612/streamlink-eplus_jp-object_storage
     volumes:
       - ./SL-downloads:/SL-downloads:rw
+      - ./YTDLP-cookies.txt:/YTDLP-cookies.txt:ro
     environment:
       # base file name (required)
       - OUTPUT_FILENAME_BASE=
@@ -142,6 +143,9 @@ services:
       # does imply "NO_DOWNLOAD_TS".
       - USE_EXISTING_MPEG_TS_VIDEO_FILE=
 
+      # proxy for streamlink and yt-dlp
+      - HTTPS_PROXY=http://127.0.0.1:1926  # empty by default.
+
       # streamlink
       - EPLUS_JP_STREAM_URL=      # enable streamlink.
       - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
@@ -154,6 +158,8 @@ services:
       - YTDLP_QUALITY=         # "--format", "bestvideo*+bestaudio/best" by default.
       - YTDLP_WAIT_FOR_VIDEO=  # "--wait-for-video", "19-26" by default.
       - YTDLP_BUFFER_SIZE=     # "--buffer-size", 200M by default.
+      - YTDLP_USERNAME=        # "--username", empty by default.
+      - YTDLP_PASSWORD=        # "--password", empty by default.
 
       # direct download
       - MPEG_TS_VIDEO_FILE_URL=  # download a MPEG-TS video.

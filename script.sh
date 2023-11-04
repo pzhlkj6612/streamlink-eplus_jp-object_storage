@@ -42,6 +42,7 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
         '--retry-max' "${retry_attempt_times}"
         '--ringbuffer-size' "${STREAMLINK_RINGBUFFER_SIZE:-200M}"
         '--hls-start-offset' "${STREAMLINK_HLS_START_OFFSET:-00:00:00}"
+        '--http-proxy' "${HTTPS_PROXY:-}"
         # '--url'
         # '--default-stream'
 )
@@ -52,6 +53,10 @@ ytdlp_record_stdout_no_url_no_format_partial_command=(
         '--verbose'
         '--wait-for-video' "${YTDLP_WAIT_FOR_VIDEO:-19-26}"
         '--buffer-size' "${YTDLP_BUFFER_SIZE:-200M}"
+        '--username' "${YTDLP_USERNAME:-}"
+        '--password' "${YTDLP_PASSWORD:-}"
+        '--cookies' '/YTDLP-cookies.txt'
+        '--proxy' "${HTTPS_PROXY:-}"
         # '--format'
         # 'URL'
 )

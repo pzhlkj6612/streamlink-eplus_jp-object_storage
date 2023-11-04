@@ -45,6 +45,8 @@ ENV PATH="/opt/ffmpeg/bin:${PATH}"
 
 VOLUME [ "/SL-downloads" ]
 
+RUN touch '/YTDLP-cookies.txt'
+
 COPY --chown=0:0 --chmod=700 ./script.sh /script.sh
 
 ENTRYPOINT [ "/script.sh" ]
