@@ -270,6 +270,11 @@ function process_stream_and_video() {
 
     rm "${in_pipe}"
 
+    if [[ "${output_number}" -eq '0' ]]; then
+        echo "no output specified."
+        exit 5
+    fi
+
     # Produce MP4
 
     if [[ -z "${NO_TRANSCODE}" ]]; then
