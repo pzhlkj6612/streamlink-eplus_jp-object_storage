@@ -42,6 +42,7 @@ streamlink_record_stdout_no_url_no_default_stream_partial_command=(
         '--retry-max' "${retry_attempt_times}"
         '--ringbuffer-size' "${STREAMLINK_RINGBUFFER_SIZE:-200M}"
         '--hls-start-offset' "${STREAMLINK_HLS_START_OFFSET:-00:00:00}"
+        '--stream-segment-threads' "${DOWNLOAD_THREAD_NUM:-1}"
         # '--url'
         # '--default-stream'
 )
@@ -61,6 +62,7 @@ ytdlp_record_stdout_no_url_no_format_partial_command=(
         '--username' "${YTDLP_USERNAME:-}"
         '--password' "${YTDLP_PASSWORD:-}"
         '--cookies' '/YTDLP-cookies.txt'
+        '--concurrent-fragments' "${DOWNLOAD_THREAD_NUM:-1}"
         # '--format'
         # 'URL'
 )

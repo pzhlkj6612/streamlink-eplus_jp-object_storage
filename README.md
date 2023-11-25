@@ -146,6 +146,9 @@ services:
       # proxy for streamlink and yt-dlp
       - HTTPS_PROXY=http://127.0.0.1:1926  # empty by default.
 
+      # common
+      - DOWNLOAD_THREAD_NUM=  # "--stream-segment-threads" for streamlink, "--concurrent-fragments" for yt-dlp
+
       # streamlink
       - EPLUS_JP_STREAM_URL=      # enable streamlink.
       - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
