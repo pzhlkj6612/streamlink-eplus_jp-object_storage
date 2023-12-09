@@ -27,7 +27,7 @@ RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
         --upgrade \
-        'https://github.com/yt-dlp/yt-dlp/archive/fe6c82ccff6338d97711204162731a8a6741c9b4.zip'
+        'https://github.com/pzhlkj6612/yt-dlp-fork/archive/1ae004981909676efec00d2df4235d0d002849f4.zip'
 
 # git - How to shallow clone a specific commit with depth 1? - Stack Overflow
 #   https://stackoverflow.com/a/43136160
