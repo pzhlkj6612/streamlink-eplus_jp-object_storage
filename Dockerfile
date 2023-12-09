@@ -47,7 +47,8 @@ VOLUME [ "/SL-downloads" ]
 
 # Why does Python say this Netscape cookie file isn't valid? - Stack Overflow
 #   https://stackoverflow.com/q/11529428
-RUN echo '# Netscape HTTP Cookie File' >'/YTDLP-cookies.txt'
+RUN mkdir '/YTDLP' && \
+    echo '# Netscape HTTP Cookie File' >'/YTDLP/cookies.txt'
 
 COPY --chown=0:0 --chmod=700 ./script.sh /script.sh
 

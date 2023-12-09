@@ -125,7 +125,7 @@ services:
     image: docker.io/pzhlkj6612/streamlink-eplus_jp-object_storage
     volumes:
       - ./SL-downloads:/SL-downloads:rw
-      - ./YTDLP-cookies.txt:/YTDLP-cookies.txt:ro
+      - ./YTDLP:/YTDLP:rw  # edit "cookies.txt" in it
     environment:
       # base file name (required)
       - OUTPUT_FILENAME_BASE=

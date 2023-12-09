@@ -61,11 +61,16 @@ ytdlp_record_stdout_no_url_no_format_partial_command=(
         '--buffer-size' "${YTDLP_BUFFER_SIZE:-200M}"
         '--username' "${YTDLP_USERNAME:-}"
         '--password' "${YTDLP_PASSWORD:-}"
-        '--cookies' '/YTDLP-cookies.txt'
         '--concurrent-fragments' "${DOWNLOAD_THREAD_NUM:-1}"
         # '--format'
         # 'URL'
 )
+
+if [[ -f '/YTDLP/cookies.txt' ]]; then
+    ytdlp_record_stdout_no_url_no_format_partial_command+=(
+        '--cookies' '/YTDLP/cookies.txt'
+    )
+fi
 
 if [[ -n "${HTTPS_PROXY}" ]]; then
     ytdlp_record_stdout_no_url_no_format_partial_command+=(
