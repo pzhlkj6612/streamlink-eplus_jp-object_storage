@@ -21,7 +21,7 @@ RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
         --upgrade \
-        'https://github.com/streamlink/streamlink/archive/0dda8ccfcbaa79035d0c60a86dac2faae5089901.zip'
+        'https://github.com/streamlink/streamlink/archive/8920cf2a1c49071f3e9dd10397477ac01469c301.zip'
 
 RUN pip install \
         --disable-pip-version-check \
