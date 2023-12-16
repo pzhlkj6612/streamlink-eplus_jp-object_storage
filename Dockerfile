@@ -1,11 +1,12 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 RUN apt update && \
     apt install \
         -y \
         --no-install-suggests \
         --no-install-recommends \
-        'curl' 'git' 'python3-pip' 'xz-utils'
+        'curl' 'git' 'python3-pip' 'xz-utils' && \
+    python3 -m pip install pip -U
 
 RUN pip install \
         --disable-pip-version-check \
