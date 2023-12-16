@@ -127,7 +127,7 @@ services:
       - ./SL-downloads:/SL-downloads:rw
       - ./YTDLP:/YTDLP:rw  # edit "cookies.txt" in it
     environment:
-      # base file name (required)
+      # base file name; will use a random one if leaving empty.
       - OUTPUT_FILENAME_BASE=
 
       # output file name configuration

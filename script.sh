@@ -487,9 +487,7 @@ function obtain_calculate_rename_upload() {
 # ENTRYPOINT #
 
 function main() {
-    test_variable 'OUTPUT_FILENAME_BASE'
-
-    output_file_basename="${OUTPUT_FILENAME_BASE}"
+    output_file_basename="${OUTPUT_FILENAME_BASE:-$(mktemp -u 'XXX')}"
 
     if [[ -z "${NO_AUTO_PREFIX_DATETIME}" ]]; then
         output_file_basename="${the_datetime}.${output_file_basename}"
