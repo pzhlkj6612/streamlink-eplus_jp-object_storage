@@ -150,11 +150,12 @@ services:
       - DOWNLOAD_THREAD_NUM=  # "--stream-segment-threads" for streamlink, "--concurrent-fragments" for yt-dlp
 
       # streamlink
-      - EPLUS_JP_STREAM_URL=      # enable streamlink.
-      - EPLUS_JP_STREAM_QUALITY=  # "best" by default.
+      - EPLUS_JP_STREAM_URL=             # enable streamlink.
+      - EPLUS_JP_STREAM_QUALITY=         # "best" by default.
       - STREAMLINK_RETRY_TOTAL_SECONDS=  # 42 seconds between attempts, 0 second (no retry) by default.
-      - STREAMLINK_RINGBUFFER_SIZE=  # "--ringbuffer-size", 200M by default.
-      - STREAMLINK_HLS_START_OFFSET=  # "--hls-start-offset", 00:00:00 by default.
+      - STREAMLINK_RINGBUFFER_SIZE=      # "--ringbuffer-size", 200M by default.
+      - STREAMLINK_HLS_START_OFFSET=     # "--hls-start-offset", 00:00:00 by default.
+      - STREAMLINK_OPTIONS=              # options passed into streamlink before all others.
 
       # yt-dlp
       - YTDLP_STREAM_URL=      # enable yt-dlp.
@@ -163,6 +164,7 @@ services:
       - YTDLP_BUFFER_SIZE=     # "--buffer-size", 200M by default.
       - YTDLP_USERNAME=        # "--username", empty by default.
       - YTDLP_PASSWORD=        # "--password", empty by default.
+      - YTDLP_OPTIONS=         # options passed into yt-dlp before all others.
 
       # direct download
       - MPEG_TS_VIDEO_FILE_URL=  # download a MPEG-TS video.
