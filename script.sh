@@ -126,6 +126,7 @@ ffmpeg_stdin_mpegts_transcode_flv_rtmp_no_target_url_partial_command=(
             '-preset' 'ultrafast'
             '-tune' 'zerolatency'
             '-profile:v' 'baseline'
+            '-crf' "${RTMP_FFMPEG_CRF:-23}"
         '-f' 'flv'
             '-flvflags' 'no_duration_filesize'
         # 'URL'
