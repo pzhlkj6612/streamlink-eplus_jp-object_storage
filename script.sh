@@ -112,6 +112,20 @@ ffmpeg_online_image_generate_still_image_mpegts_video_stdout_command=(
         '-'
 )
 
+if [[ -n "${RTMP_FFMPEG_USE_LIBX264_ENCODING}" ]]; then
+    ffmpeg_video_encoding_arguments=(
+        '-c:v' 'libx264'
+            '-preset' 'ultrafast'
+            '-tune' 'zerolatency'
+            '-profile:v' 'baseline'
+            '-crf' "${RTMP_FFMPEG_CRF:-23}"
+    )
+else
+    ffmpeg_video_encoding_arguments=(
+        '-c:v' 'copy'
+    )
+fi
+
 ffmpeg_stdin_mpegts_transcode_flv_rtmp_no_target_url_partial_command=(
     # ffmpeg - Explanation of x264 tune - Super User
     #   https://superuser.com/q/564402
@@ -122,11 +136,7 @@ ffmpeg_stdin_mpegts_transcode_flv_rtmp_no_target_url_partial_command=(
         '-f' 'mpegts'
         '-i' '-'
         '-c:a' 'copy'
-        '-c:v' 'libx264'
-            '-preset' 'ultrafast'
-            '-tune' 'zerolatency'
-            '-profile:v' 'baseline'
-            '-crf' "${RTMP_FFMPEG_CRF:-23}"
+        "${ffmpeg_video_encoding_arguments[@]}"
         '-f' 'flv'
             '-flvflags' 'no_duration_filesize'
         # 'URL'

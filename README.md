@@ -180,6 +180,7 @@ services:
 
       # rtmp
       - RTMP_TARGET_URL=     # enable RTMP streaming.
+      - RTMP_FFMPEG_USE_LIBX264_ENCODING=  # enable video encoding, otherwise just copy the video stream.
       - RTMP_FFMPEG_CRF=     # CRF value, 23 by detault, see https://trac.ffmpeg.org/wiki/Encode/H.264#a1.ChooseaCRFvalue .
 
       # MP4 output control
