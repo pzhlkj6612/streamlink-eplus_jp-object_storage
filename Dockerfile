@@ -39,7 +39,7 @@ RUN mkdir '/SL-plugins' && \
     git -C '/SL-plugins' switch --detach 'FETCH_HEAD'
 
 RUN mkdir -p '/opt/ffmpeg' && \
-    curl -L 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-01-20-12-45/ffmpeg-n6.1.1-1-g61b88b4dda-linux64-gpl-shared-6.1.tar.xz' | \
+    curl -L 'https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-02-09-12-55/ffmpeg-n6.1.1-2-gbfacb66fc8-linux64-gpl-shared-6.1.tar.xz' | \
         tar -C '/opt/ffmpeg' -f- -x --xz --strip-components=1
 
 ENV PATH="/opt/ffmpeg/bin:${PATH}"
