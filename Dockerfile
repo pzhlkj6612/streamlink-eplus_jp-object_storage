@@ -11,7 +11,7 @@ RUN apt update && \
 RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
-        --upgrade \
+        --force-reinstall \
         'https://github.com/s3tools/s3cmd/archive/9d17075b77e933cf9d7916435c426d38ab5bca5e.zip'
 
 RUN curl -L 'https://aka.ms/InstallAzureCLIDeb' | bash
@@ -21,13 +21,13 @@ RUN curl -L 'https://aka.ms/InstallAzureCLIDeb' | bash
 RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
-        --upgrade \
+        --force-reinstall \
         'https://github.com/streamlink/streamlink/archive/010364de80e3555b293c9fdd8a57e26c79e16751.zip'
 
 RUN pip install \
         --disable-pip-version-check \
         --no-cache-dir \
-        --upgrade \
+        --force-reinstall \
         'https://github.com/pzhlkj6612/yt-dlp-fork/archive/1ae004981909676efec00d2df4235d0d002849f4.zip'
 
 # git - How to shallow clone a specific commit with depth 1? - Stack Overflow
