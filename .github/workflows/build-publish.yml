@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+    # https://github.blog/changelog/2021-04-19-github-actions-limit-workflow-run-or-job-concurrency/
+    concurrency:
+      group: std::lock_guard
+    timeout-minutes: 5
     steps:
       -
         name: Get the name of this repo
