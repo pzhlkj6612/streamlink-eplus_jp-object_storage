@@ -32,7 +32,7 @@ RUN pip install \
 
 # git - How to shallow clone a specific commit with depth 1? - Stack Overflow
 #   https://stackoverflow.com/a/43136160
-RUN mkdir '/SL-plugins' && \
+RUN mkdir -p '/SL-plugins' && \
     git -C '/SL-plugins' init && \
     git -C '/SL-plugins' remote add 'origin' 'https://github.com/code-with-IPID/streamlink-plugins.git' && \
     git -C '/SL-plugins' fetch --depth=1 'origin' '8cf88410ed8357082c966ef0361ac1dff8598f09' && \
@@ -47,7 +47,7 @@ ENV PATH="/opt/ffmpeg/bin:${PATH}"
 VOLUME [ "/SL-downloads" ]
 
 # for cookies.txt
-RUN mkdir '/YTDLP'
+RUN mkdir -p '/YTDLP'
 
 COPY --chown=0:0 --chmod=700 ./script.sh /script.sh
 
