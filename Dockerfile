@@ -12,11 +12,10 @@ RUN apt update && \
     'ca-certificates' 'libarchive-tools' 'curl' 'make' 'cmake' 'build-essential'
 
 RUN curl -L 'https://github.com/axiomatic-systems/Bento4/archive/f8ce9a93de14972a9ddce442917ddabe21456f4d.zip' | \
-        bsdtar -f- -x --strip-components=1
-
-RUN mkdir -p ${BENTO4_BUILD_DIR} && \
+        bsdtar -f- -x --strip-components=1 && \
+    mkdir -p ${BENTO4_BUILD_DIR} && \
     cd ${BENTO4_BUILD_DIR} && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release "${OLDPWD}" && \
     make mp4decrypt -j2
 
 
