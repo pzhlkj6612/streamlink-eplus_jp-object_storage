@@ -4,7 +4,7 @@
 
 ## What does this docker image do
 
-- Download the live streaming or VOD from [eplus](https://ib.eplus.jp/) and other websites via Streamlink or yt-dlp.
+- Download the live streaming or VOD from [eplus](https://ib.eplus.jp/) and other websites via Streamlink, yt-dlp or N_m3u8DL-RE.
 - Upload the video file to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
 
 ## Details
@@ -15,7 +15,7 @@ For a 4-hour live event, the size of a MPEG-TS recording with the best quality i
 
 ### Downloader support
 
-The yt-dlp support is experimental.
+The support of yt-dlp & N_m3u8DL-RE is experimental.
 
 ### Output
 
@@ -148,7 +148,7 @@ services:
       # does imply "NO_DOWNLOAD_TS".
       - USE_EXISTING_MPEG_TS_VIDEO_FILE=
 
-      # proxy for streamlink and yt-dlp
+      # proxy for streamlink, yt-dlp and N_m3u8DL-RE
       - HTTPS_PROXY=http://127.0.0.1:1926  # empty by default.
 
       # streamlink
@@ -159,6 +159,10 @@ services:
       # yt-dlp
       - YTDLP_STREAM_URL=      # enable yt-dlp.
       - YTDLP_OPTIONS=         # options passed into yt-dlp after default ones; see https://github.com/yt-dlp/yt-dlp
+
+      # N_m3u8DL-RE
+      - N_m3u8DL_RE_STREAM_URL=      # enable N_m3u8DL-RE.
+      - N_m3u8DL_RE_OPTIONS=         # options passed into N_m3u8DL-RE after default ones; see https://github.com/nilaoda/N_m3u8DL-RE
 
       # direct download
       - VIDEO_FILE_URL=  # download a video file.
@@ -270,6 +274,7 @@ $ podman build --tag ${tag} .
   - [Azure/azure-cli](https://github.com/Azure/azure-cli).
   - [streamlink/streamlink](https://github.com/streamlink/streamlink) and [pmrowla/streamlink-plugins](https://github.com/pmrowla/streamlink-plugins).
   - [yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp)
+  - [nilaoda/N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
   - [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds).
   - I used to format my bash shell script with [shell-format - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format).
 - Platforms:

@@ -1,3 +1,25 @@
+ARG BENTO4_BUILD_DIR=/tmp/cmakebuild
+
+FROM ubuntu:jammy AS bento4-building
+
+ARG BENTO4_BUILD_DIR
+
+RUN apt update && \
+    apt install \
+    -y \
+    --no-install-suggests \
+    --no-install-recommends \
+    'libarchive-tools' 'curl' 'make' 'cmake' 'build-essential'
+
+RUN curl -L 'https://github.com/axiomatic-systems/Bento4/archive/f8ce9a93de14972a9ddce442917ddabe21456f4d.zip' | \
+        bsdtar -f- -x --strip-components=1
+
+RUN mkdir -p ${BENTO4_BUILD_DIR} && \
+    cd ${BENTO4_BUILD_DIR} && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    make mp4decrypt -j2
+
+
 FROM ubuntu:jammy
 
 RUN apt update && \
@@ -30,6 +52,19 @@ RUN pip install \
         --force-reinstall \
         'https://github.com/yt-dlp/yt-dlp/archive/a065086640e888e8d58c615d52ed2f4f4e4c9d18.zip'
 
+RUN mkdir '/opt/n_m3u8dl_re' && \
+    if [ "$(uname -m)" = 'x86_64' ]; then \
+        n_m3u8dl_re_url='https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.2.1-beta/N_m3u8DL-RE_Beta_linux-x64_20240828.tar.gz'; \
+    else \
+        n_m3u8dl_re_url='https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.2.1-beta/N_m3u8DL-RE_Beta_linux-arm64_20240828.tar.gz'; \
+    fi && \
+    curl -L "${n_m3u8dl_re_url}" | \
+        tar -C '/opt/n_m3u8dl_re' -f- -x --xz --strip-components=1 && \
+    chmod u+x '/opt/n_m3u8dl_re/N_m3u8DL-RE'
+
+ARG BENTO4_BUILD_DIR
+COPY --from='bento4-building' ${BENTO4_BUILD_DIR}/mp4decrypt '/opt/n_m3u8dl_re/mp4decrypt'
+
 # git - How to shallow clone a specific commit with depth 1? - Stack Overflow
 #   https://stackoverflow.com/a/43136160
 RUN mkdir '/SL-plugins' && \
@@ -47,7 +82,7 @@ RUN mkdir '/opt/ffmpeg' && \
     curl -L "${ffmpeg_url}" | \
         tar -C '/opt/ffmpeg' -f- -x --xz --strip-components=1
 
-ENV PATH="/opt/ffmpeg/bin:${PATH}"
+ENV PATH="/opt/ffmpeg/bin:/opt/n_m3u8dl_re:${PATH}"
 
 VOLUME [ "/SL-downloads" ]
 
