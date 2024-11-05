@@ -75,9 +75,9 @@ RUN mkdir '/SL-plugins' && \
 
 RUN mkdir '/opt/ffmpeg' && \
     if [ "$(uname -m)" = 'x86_64' ]; then \
-        ffmpeg_url='https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-08-16-13-46/ffmpeg-n7.0.2-5-g5ff181c025-linux64-gpl-7.0.tar.xz'; \
+        ffmpeg_url='https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-11-05-13-03/ffmpeg-n7.1-16-g15035aaec0-linux64-gpl-7.1.tar.xz'; \
     else \
-        ffmpeg_url='https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-08-16-13-46/ffmpeg-n7.0.2-5-g5ff181c025-linuxarm64-gpl-7.0.tar.xz'; \
+        ffmpeg_url='https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2024-11-05-13-03/ffmpeg-n7.1-16-g15035aaec0-linuxarm64-gpl-7.1.tar.xz'; \
     fi && \
     curl -L "${ffmpeg_url}" | \
         tar -C '/opt/ffmpeg' -f- -x --xz --strip-components=1
