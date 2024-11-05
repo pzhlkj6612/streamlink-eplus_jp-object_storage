@@ -58,7 +58,7 @@ RUN mkdir '/opt/n_m3u8dl_re' && \
         n_m3u8dl_re_url='https://github.com/nilaoda/N_m3u8DL-RE/releases/download/v0.2.1-beta/N_m3u8DL-RE_Beta_linux-arm64_20240828.tar.gz'; \
     fi && \
     curl -L "${n_m3u8dl_re_url}" | \
-        tar -C '/opt/n_m3u8dl_re' -f- -x --xz --strip-components=1 && \
+        tar -C '/opt/n_m3u8dl_re' -f- -x --gzip --strip-components=1 && \
     chmod u+x '/opt/n_m3u8dl_re/N_m3u8DL-RE'
 
 ARG BENTO4_BUILD_DIR
