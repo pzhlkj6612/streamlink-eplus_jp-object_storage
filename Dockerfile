@@ -9,7 +9,7 @@ RUN apt update && \
     -y \
     --no-install-suggests \
     --no-install-recommends \
-    'libarchive-tools' 'curl' 'make' 'cmake' 'build-essential'
+    'ca-certificates' 'libarchive-tools' 'curl' 'make' 'cmake' 'build-essential'
 
 RUN curl -L 'https://github.com/axiomatic-systems/Bento4/archive/f8ce9a93de14972a9ddce442917ddabe21456f4d.zip' | \
         bsdtar -f- -x --strip-components=1
@@ -27,7 +27,7 @@ RUN apt update && \
         -y \
         --no-install-suggests \
         --no-install-recommends \
-        'curl' 'git' 'python3-pip' 'xz-utils' && \
+        'ca-certificates' 'curl' 'git' 'python3-pip' 'xz-utils' && \
     python3 -m pip install pip -U
 
 RUN pip install \
