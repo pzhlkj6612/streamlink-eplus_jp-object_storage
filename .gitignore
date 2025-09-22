@@ -1,6 +1,7 @@
 # Container configurations
 *.yml
 *.yaml
+!docker-compose.example.yml
 
 # Workflow
 !.github/workflows/*.yml

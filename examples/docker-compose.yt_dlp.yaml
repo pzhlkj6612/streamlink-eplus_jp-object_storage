@@ -1,0 +1,14 @@
+services:
+  live-3:
+    container_name: live-3
+    restart: on-failure
+    image: ghcr.io/chocolzs/streamlink-eplus_jp-object_storage:canary
+    environment:
+      - YTDLP_STREAM_URL=https://www.youtube.com/live/example
+      - "YTDLP_OPTIONS="
+      - RTMP_TARGET_URL=rtmp://example.org
+      - NO_DOWNLOAD_TS=1
+    volumes:
+      - /path/to/cookies/cookie.txt:/opt/config/cookies/ytb.txt
+      - /path/to/cookies:/opt/config/cookies
+      - /path/to/yt-dlp:/opt/tools/bin/yt-dlp

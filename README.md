@@ -5,7 +5,7 @@
 ## What does this docker image do
 
 - Download the live streaming or VOD from [eplus](https://ib.eplus.jp/) and other websites via Streamlink, yt-dlp or N_m3u8DL-RE.
-- Upload the video file to S3-compatible object storage via S3cmd or to Azure Storage container via Azure CLI.
+- Upload the video file under your control with tool `rclone`.
 
 ## Details
 
@@ -21,7 +21,7 @@ The support of yt-dlp & N_m3u8DL-RE is experimental.
 
 The output file is in ".ts" format. I believe that your media player is smart enough to get to know the actual codec.
 
-The file is located in the "/SL-downloads" directory in the container. You are able to access those files by mounting a volume into that directory **before** creating the container (otherwise you may have to play with [`docker cp`](https://docs.docker.com/reference/cli/docker/container/cp/) or anonymous volumes).
+The file is located in the "/opt/downloads" directory in the container. You are able to access those files by mounting a volume into that directory **before** creating the container (otherwise you may have to play with [`docker cp`](https://docs.docker.com/reference/cli/docker/container/cp/) or anonymous volumes).
 
 You will see some intermediate files. Those files will be renamed to "final files" finally:
 
@@ -62,57 +62,36 @@ ${datetime}.${OUTPUT_FILENAME_BASE}.${size}.ts        # NO_AUTO_MD5
 
 ### Prepare your object storage
 
-#### AWS S3-compatible preparation (simpler)
+#### Rclone preparation
 
-Create your own object storage:
-
-- AWS:
-  - [Creating, configuring, and working with Amazon S3 buckets - Amazon Simple Storage Service](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets-s3.html)
-- DigitalOcean:
-  - [How to Create Spaces :: DigitalOcean Documentation](https://docs.digitalocean.com/products/spaces/how-to/create/)
-  - [Setting Up s3cmd 2.x with DigitalOcean Spaces :: DigitalOcean Documentation](https://docs.digitalocean.com/products/spaces/resources/s3cmd/)
-- Linode:
-  - [Object Storage - Get Started | Linode](https://www.linode.com/docs/products/storage/object-storage/get-started/)
-  - [Deploy a Static Site using Hugo and Object Storage | Linode](https://www.linode.com/docs/guides/host-static-site-object-storage/)
-- Vultr:
-  - [Vultr Object Storage - Vultr.com](https://www.vultr.com/docs/vultr-object-storage)
-- DreamObjects:
-  - [DreamObjects overview – DreamHost Knowledge Base](https://help.dreamhost.com/hc/en-us/articles/214823108-DreamObjects-overview)
-  - [Installing S3cmd – DreamHost Knowledge Base](https://help.dreamhost.com/hc/en-us/articles/215916627-Installing-S3cmd)
+> Remember to correctly set up the Docker volume mapping.
 
 Environment variables:
 
 | Name | Description
 | - | -
-| S3_BUCKET | URL in `s3://bucket-name/dir-name/` style
-| S3_HOSTNAME | For example: <br> `s3-eu-west-1.amazonaws.com` <br> `nyc3.digitaloceanspaces.com` <br> `us-east-1.linodeobjects.com` <br> `ewr1.vultrobjects.com` <br> `objects-us-east-1.dream.io`
-| AWS_ACCESS_KEY_ID | The access key
-| AWS_SECRET_ACCESS_KEY | The secret key
+| ENABLE_RCLONE | The flag to enable rclone feature.
+| RCLONE_CONFIG_PATH | The path to your rclone config file, for example `/tmp/rclone.conf`
 
-#### Azure preparation
+Prepare your own rclone provider:
 
-Create a service principal on Azure.
+> offical config example: https://rclone.org/#providers
 
-- [Create an Azure AD app and service principal in the portal - Microsoft identity platform | Microsoft Docs](https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal)
-- [Create an Azure service principal – Azure CLI | Microsoft Docs](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli)
+```conf
+[sshserver]
+type = sftp
+host = example.com
+user = sftpuser
+key_file = ~/id_rsa
+pubkey_file = ~/id_rsa-cert.pub
 
-For [`azure-cli`](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli) :
-
-```console
-$ az login --use-device-code
-$ az ad sp create-for-rbac --role 'Contributor' --name "${name}" --scopes "/subscriptions/${subscription}/resourceGroups/${resourceGroup}/providers/Microsoft.Storage/storageAccounts/${AZURE_STORAGE_ACCOUNT}"
-
+[amazon-s3]
+type = s3
+provider = LyveCloud
+access_key_id = XXX
+secret_access_key = YYY
+endpoint = s3.us-east-1.lyvecloud.seagate.com
 ```
-
-Environment variables:
-
-| Name | Description
-| - | -
-| AZ_SP_APPID | Application (client) ID
-| AZ_SP_PASSWORD | Client secret
-| AZ_SP_TENANT | Directory (tenant) ID
-| AZURE_STORAGE_ACCOUNT | Azure storage account
-| AZ_STORAGE_CONTAINER_NAME | Storage container name
 
 ### Launch the container
 
@@ -129,8 +108,9 @@ services:
   sl:
     image: docker.io/pzhlkj6612/streamlink-eplus_jp-object_storage
     volumes:
-      - ./SL-downloads:/SL-downloads:rw
-      - ./YTDLP:/YTDLP:rw  # edit "cookies.txt" in it
+      - ./downloads:/opt/downloads:rw
+      - ./ytb.txt:/opt/config/cookies.txt:rw  # edit "cookies.txt" in it
+      - ./streamlink.AppImage:/opt/tools/bin/streamlink.AppImage
     environment:
       # base file name; will use a random one if leaving empty.
       - OUTPUT_FILENAME_BASE=
@@ -163,6 +143,9 @@ services:
       # N_m3u8DL-RE
       - N_m3u8DL_RE_STREAM_URL=      # enable N_m3u8DL-RE.
       - N_m3u8DL_RE_OPTIONS=         # options passed into N_m3u8DL-RE after default ones; see https://github.com/nilaoda/N_m3u8DL-RE
+      - N_m3u8DL_RE_FFMPEG_OPTIONS=  # set environment variable for RE_LIVE_PIPE_OPTIONS, for more details: https://github.com/nilaoda/N_m3u8DL-RE/blob/30499f5f87e9470e051036946c95620f0774a0d2/src/N_m3u8DL-RE/Util/PipeUtil.cs#L49C63-L49C83
+                                     # the default value is: " -f flv -flvflags no_duration_filesize ", output pipe is handled inside
+                                     # if you wan't exclude some stream, for example, you can set " -map -0:d -c copy -f flv " to exclude data stream
 
       # direct download
       - VIDEO_FILE_URL=  # download a video file.
@@ -184,22 +167,10 @@ services:
 
       # uploading control
 
-      - ENABLE_S3=           # enable s3cmd.
-      - ENABLE_AZURE=        # enable azure-cli.
+      - ENABLE_RCLONE=       # enable rclone
 
-      # s3cmd
-      - AWS_ACCESS_KEY_ID=
-      - AWS_SECRET_ACCESS_KEY=
-      - S3_BUCKET=
-      - S3_HOSTNAME=
-      - S3CMD_MULTIPART_CHUNK_SIZE_MB=  # "--multipart-chunk-size-mb", 15 by default.
-
-      # azure-cli
-      - AZURE_STORAGE_ACCOUNT=
-      - AZ_SP_APPID=
-      - AZ_SP_PASSWORD=
-      - AZ_SP_TENANT=
-      - AZ_STORAGE_CONTAINER_NAME=
+      # rclone
+      - RCLONE_CONFIG_PATH=/path/to/rclone.conf
 
 ```
 
@@ -232,7 +203,7 @@ spec:
   volumes:
     - name: SL-downloads
       hostPath:
-        path: ./SL-downloads
+        path: ./downloads
         type: Directory
   restartPolicy: Never
   containers:
@@ -240,7 +211,7 @@ spec:
       image: docker.io/pzhlkj6612/streamlink-eplus_jp-object_storage
       resources: {}
       volumeMounts:
-        - mountPath: /SL-downloads
+        - mountPath: /opt/downloads
           name: SL-downloads
       env:
         # Please refer to the "Docker" section.
@@ -270,15 +241,16 @@ $ podman build --tag ${tag} .
   - Docker and Docker Compose.
   - Podman and Kubernetes.
 - Useful open-source programs and tools:
-  - [s3tools/s3cmd](https://github.com/s3tools/s3cmd).
-  - [Azure/azure-cli](https://github.com/Azure/azure-cli).
+  - [rclone/rclone](https://github.com/rclone/rclone).
   - [streamlink/streamlink](https://github.com/streamlink/streamlink) and [pmrowla/streamlink-plugins](https://github.com/pmrowla/streamlink-plugins).
   - [yt-dlp/yt-dlp](https://github.com/yt-dlp/yt-dlp)
   - [nilaoda/N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
   - [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds).
   - I used to format my bash shell script with [shell-format - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=foxundermoon.shell-format).
 - Platforms:
-  - AWS, DigitalOcean, Linode, Vultr and DreamHost.
-  - Microsoft Azure.
   - [Stack Exchange](https://stackexchange.com/) website group.
-  - Linux and Ubuntu.
+  - Linux and Debian.
+
+## Further to do
+
+- [ ] Use alpine as the base image to decrese the image size.

@@ -1,0 +1,31 @@
+services:
+  relay:
+    container_name: rtmp-relay
+    restart: on-failure
+    image: ghcr.io/pzhlkj6612/streamlink-eplus_jp-object_storage:unstable
+    cap_add:                #################
+      - SYS_ADMIN           ##do not delete##
+    devices:                ##  streamlink ##
+      - /dev/fuse           ##   appimage  ##
+    security_opt:           ##             ##
+      - apparmor:unconfined #################
+    environment:
+      # - YTDLP_STREAM_URL=<VALID-YT-DLP-URL>
+      # - "YTDLP_OPTIONS=-q"
+
+      # - STREAMLINK_STREAM_URL=<VALID-STREAMLINK-URL>
+      # - "STREAMLINK_OPTIONS="
+
+      - N_m3u8DL_RE_STREAM_URL=<VALID-N_m3u8DL_RE-URL>
+      - N_m3u8DL_RE_OPTIONS=--log-level OFF --no-log
+      - "N_m3u8DL_RE_FFMPEG_OPTIONS=-c copy -f flv"
+
+      - RTMP_TARGET_URL=rtmp://<VALID-RTMP-URL>
+      - NO_DOWNLOAD_TS=1
+    volumes:
+      - ./ytb.txt:/opt/config/cookies.txt
+      - ./yt-dlp:/opt/tools/bin/yt-dlp
+      - ./streamlink.appimage:/opt/tools/bin/streamlink
+      - ./n_m3u8DL_RE:/opt/tools/bin/n_m3u8DL_RE
+      - ./stremalink-plugins:/opt/config/SL-plugins
+      - ./downloads:/opt/downloads

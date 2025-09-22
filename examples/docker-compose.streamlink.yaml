@@ -1,0 +1,16 @@
+services:
+  live-1:
+    container_name: live-1
+    restart: on-failure
+    image: ghcr.io/chocolzs/streamlink-eplus_jp-object_storage:canary
+    environment:
+      - STREAMLINK_STREAM_URL=<streamlink supported URL>
+      - RTMP_TARGET_URL=rtmp://example.org
+      - "STREAMLINK_OPTIONS=--eplus-allow-relogin --eplus-allow-relogin --eplus-id foo --eplus-password bar"
+      - NO_DOWNLOAD_TS=1
+    volumes:
+      - /path/to/streamlink-plugins:/opt/config/SL-plugins
+      # you can use your own streamlink.AppImage
+      - /path/to/streamlink.AppImage:/opt/tools/bin/streamlink.AppImage
+      - /path/to/cookies:/opt/config/cookies
+      - /path/to/cookies/cookie.txt:/opt/config/cookies/ytb.txt

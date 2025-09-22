@@ -1,0 +1,10 @@
+services:
+  live-2:
+    container_name: live-2
+    restart: on-failure
+    image: ghcr.io/chocolzs/streamlink-eplus_jp-object_storage:canary
+    environment:
+      - "N_m3u8DL_RE_STREAM_URL=https://example.org/manifest.mpd"
+      - RTMP_TARGET_URL=rtmp://example.org
+      - 'N_m3u8DL_RE_OPTIONS=-H "Origin: https://example.org" -H "Referer: https://example.org" --key 61d6f90c98aa4330adad37672dc51020:32ef3da2d921500a451da0cb3fad4a99 --key 6a72b3e6a89848a3ae8b936b7dbe19ee:8184fa5fe887d5c3cd700a55ad29f91e --key 85ba9941fd4f4da4a78467b250b2d99d:b1439f55f48b6972baf703a72a7a40f5 --key 9c42c06dc2f6480bb4d5c578f591abf0:5ede2a74439fe40b82c76e4cb757f8da'
+      - NO_DOWNLOAD_TS=1

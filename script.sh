@@ -13,6 +13,7 @@ echo "------ the_datetime = ${the_datetime}"
 # How do I kill background processes / jobs when my shell script exits? - Stack Overflow
 #   https://stackoverflow.com/q/360201/360275#comment112697932_360275
 trap 'jobs -pr | xargs -r kill' SIGINT SIGTERM EXIT
+trap cleanup SIGINT SIGTERM EXIT
 
 #############
 # Utilities #
@@ -32,7 +33,7 @@ function test_variable() {
 
 streamlink_record_stdout_no_url_no_default_stream_partial_command=(
     'streamlink'
-        '--plugin-dirs=''/SL-plugins'
+        '--plugin-dirs=''/opt/config/SL-plugins'
         '--stdout'
         '--loglevel=trace'
         ${STREAMLINK_OPTIONS}
@@ -55,9 +56,9 @@ ytdlp_record_stdout_no_url_no_format_partial_command=(
         # 'URL'
 )
 
-if [[ -f '/YTDLP/cookies.txt' ]]; then
+if [[ -f '/opt/config/cookies.txt' ]]; then
     ytdlp_record_stdout_no_url_no_format_partial_command+=(
-        '--cookies' '/YTDLP/cookies.txt'
+        '--cookies' '/opt/config/cookies.txt'
     )
 fi
 
@@ -67,16 +68,28 @@ if [[ -n "${HTTPS_PROXY}" ]]; then
     )
 fi
 
+INNER_N_m3u8DL_RE_OPTIONS='--log-level DEBUG'
+if [[ -n "${N_m3u8DL_RE_OPTIONS}" ]]; then
+    INNER_N_m3u8DL_RE_OPTIONS="${N_m3u8DL_RE_OPTIONS}"
+fi
+
 n_m3u8dl_re_record_stdout_no_url_no_format_partial_command=(
-    'RE_LIVE_PIPE_OPTIONS=" -f flv -flvflags no_duration_filesize"'
     'N_m3u8DL-RE'
         '--live-pipe-mux'
+        '--live-keep-segments'
+        'False'  # pipe to ffmpeg directly without saving segments
         '--no-ansi-color'
         '--auto-select'
-        '--log-level' 'DEBUG'
-        ${N_m3u8DL_RE_OPTIONS}
-        # 'URL'
+        # '--log-level' 
+        # 'OFF'
+        # '--no-log'
 )
+
+# Add N_m3u8DL_RE_OPTIONS using eval to preserve quotes
+if [[ -n "${INNER_N_m3u8DL_RE_OPTIONS}" ]]; then
+    eval "n_m3u8dl_re_record_stdout_no_url_no_format_partial_command+=(${INNER_N_m3u8DL_RE_OPTIONS})"
+fi
+# URL will be added later
 
 if [[ -n "${HTTPS_PROXY}" ]]; then
     n_m3u8dl_re_record_stdout_no_url_no_format_partial_command+=(
@@ -203,15 +216,21 @@ function process_stream_and_video() {
         "${ytdlp_record_stdout_command[@]}" &
 
     elif [[ -n "${N_m3u8DL_RE_STREAM_URL}" ]]; then
-        # yt-dlp --(.ts)-> pipe
+        # N_3u8DL_RE --(.ts)-> pipe
 
         n_m3u8dl_re_record_stdout_command=(
             "${n_m3u8dl_re_record_stdout_no_url_no_format_partial_command[@]}"
             "${N_m3u8DL_RE_STREAM_URL}"
         )
 
-        1>"${in_pipe}" \
-        "${n_m3u8dl_re_record_stdout_command[@]}" &
+        RAW_RE_LIVE_PIPE_OPTIONS=" -f flv -flvflags no_duration_filesize "
+
+        if [[ -n "${N_m3u8DL_RE_FFMPEG_OPTIONS}" ]]; then
+            RAW_RE_LIVE_PIPE_OPTIONS="${N_m3u8DL_RE_FFMPEG_OPTIONS}"
+        fi
+
+        RE_LIVE_PIPE_OPTIONS=" ${RAW_RE_LIVE_PIPE_OPTIONS} ${in_pipe}" \
+            "${n_m3u8dl_re_record_stdout_command[@]}" &
 
     elif [[ -n "${VIDEO_FILE_URL}" ]]; then
         # curl -> pipe
@@ -333,106 +352,94 @@ function process_stream_and_video() {
 # Processor #
 #############
 
-#########
-# S3cmd #
+##############
+# Streamlink #
 
-function test_s3_variables() {
-    test_variable 'AWS_ACCESS_KEY_ID'
-    test_variable 'AWS_SECRET_ACCESS_KEY'
-    test_variable 'S3_BUCKET'
-    test_variable 'S3_HOSTNAME'
+TOOLS_DIR=/opt/tools/bin
+STREAMLINK_APPIMAGE_EXTRACT_DIR=${TOOLS_DIR}/streamlink-appimage-extract
+
+function prepare_streamlink() {
+    ${TOOLS_DIR}/streamlink.AppImage --appimage-extract > /dev/null
+    mv squashfs-root ${STREAMLINK_APPIMAGE_EXTRACT_DIR}
+    ln -s ${STREAMLINK_APPIMAGE_EXTRACT_DIR}/AppRun ${TOOLS_DIR}/streamlink
 }
 
-function init_s3() {
-    echo '------ vvvvvv S3cmd init vvvvvv'
+function cleanup_streamlink() {
+    if [[ -d ${STREAMLINK_APPIMAGE_EXTRACT_DIR} ]]; then
+        rm -rf ${STREAMLINK_APPIMAGE_EXTRACT_DIR}
+    fi
 
-    test_s3_variables
-
-    s3cmd --version
-
-    s3cmd \
-        --host="${S3_HOSTNAME}" \
-        --host-bucket='%(bucket)s.'"${S3_HOSTNAME}" \
-        info "${S3_BUCKET}"
-
-    echo '------ ^^^^^^ S3cmd init ^^^^^^'
+    if [[ -L ${TOOLS_DIR}/streamlink ]]; then
+        rm ${TOOLS_DIR}/streamlink
+    fi
 }
 
-function upload_to_s3() {
-    echo '------ vvvvvv S3cmd upload vvvvvv'
+# Streamlink #
+##############
+
+#############
+# Rclone CLI #
+
+function test_configuration() {
+    if [[ -z "${RCLONE_CONFIG_PATH}" ]]; then
+        echo 'Rclone configuration not found.'
+        exit 1
+    fi
+
+    rclone --config "${RCLONE_CONFIG_PATH}" listremotes
+
+    if [[ $? -ne 0 ]]; then
+        echo 'Rclone configuration test failed.'
+        exit 1
+    fi
+
+    remotes=$(rclone --config ${RCLONE_CONFIG_PATH} listremotes | sed 's/:$//')
+    test_file="streamlink-eplus_jp-object_storage_rclone_test.txt"
+    echo "dryrun" > /tmp/${test_file}
+
+    for remote in ${remotes}; do
+        echo "Testing ${remote}..."
+        rclone --config ${RCLONE_CONFIG_PATH} copy "/tmp/${test_file}" "${remote}:" --dry-run
+        if [[ $? -ne 0 ]]; then
+            rm /tmp/${test_file}
+            echo "Test failed for remote: ${remote}."
+            # maybe we use strict mode here
+            exit 1
+        fi
+    done
+
+    rm /tmp/${test_file}
+}
+
+function init_rclone() {
+    echo '------ vvvvvv Rclone CLI init vvvvvv'
+
+    test_configuration
+
+    rclone version
+
+    echo '------ ^^^^^^ Rclone CLI init ^^^^^^'
+}
+
+function upload_to_rclone() {
+    echo '------ vvvvvv Rclone CLI upload vvvvvv'
 
     set -u
 
-    s3cmd \
-        --host="${S3_HOSTNAME}" \
-        --host-bucket='%(bucket)s.'"${S3_HOSTNAME}" \
-        --progress \
-        --multipart-chunk-size-mb="${S3CMD_MULTIPART_CHUNK_SIZE_MB:-15}" \
-        put "${1}" "${S3_BUCKET}"
+    remotes=$(rclone --config ${RCLONE_CONFIG_PATH} listremotes | sed 's/:$//')
+
+    for remote in ${remotes}; do
+        echo "Uploading to ${remote}..."
+        rclone --config ${RCLONE_CONFIG_PATH} copy "${1}" "${remote}:"
+    done
 
     set +u
 
-    echo '------ ^^^^^^ S3cmd upload ^^^^^^'
+    echo '------ ^^^^^^ Rclone CLI upload ^^^^^^'
 }
 
-# S3cmd #
-#########
-
-#############
-# Azure CLI #
-
-function test_azure_variables() {
-    test_variable 'AZURE_STORAGE_ACCOUNT'
-    test_variable 'AZ_SP_APPID'
-    test_variable 'AZ_SP_PASSWORD'
-    test_variable 'AZ_SP_TENANT'
-    test_variable 'AZ_STORAGE_CONTAINER_NAME'
-}
-
-function init_azure() {
-    echo '------ vvvvvv Azure CLI init vvvvvv'
-
-    test_azure_variables
-
-    az version
-
-    az login \
-        --service-principal \
-        --username "${AZ_SP_APPID}" \
-        --password "${AZ_SP_PASSWORD}" \
-        --tenant "${AZ_SP_TENANT}"
-
-    az extension add -n storage-blob-preview
-
-    # test if storage container is accessible. Exit code 3 if not found.
-    az storage container show \
-        --name "${AZ_STORAGE_CONTAINER_NAME}"
-
-    echo '------ ^^^^^^ Azure CLI init ^^^^^^'
-}
-
-function upload_to_azure() {
-    echo '------ vvvvvv Azure CLI vvvvvv'
-
-    set -u
-
-    file_name="${1##*/}"
-
-    az storage blob upload \
-        --container-name "${AZ_STORAGE_CONTAINER_NAME}" \
-        --content-md5 "$(openssl dgst -md5 -binary "${1}" | base64)" \
-        --file "${1}" \
-        --name "${file_name}" \
-        --tier 'Cool' \
-        --validate-content
-
-    set +u
-
-    echo '------ ^^^^^^ Azure CLI ^^^^^^'
-}
-
-# Azure CLI #
-#############
+# Rclone CLI #
+##############
 
 ################################################
 # Get file's information, rename it, upload it #
@@ -472,12 +479,8 @@ function obtain_calculate_rename_upload() {
         mv "${1}" "${the_file_final_path}"
     fi
 
-    if [[ -n "${ENABLE_S3}" ]]; then
-        upload_to_s3 "${the_file_final_path}"
-    fi
-
-    if [[ -n "${ENABLE_AZURE}" ]]; then
-        upload_to_azure "${the_file_final_path}"
+    if [[ -n "${ENABLE_RCLONE}" ]]; then
+        upload_to_rclone "${the_file_final_path}"
     fi
 
     echo '------ ^^^^^^ obtain calculate rename upload ^^^^^^'
@@ -486,8 +489,46 @@ function obtain_calculate_rename_upload() {
 # Get file's information, rename it, upload it #
 ################################################
 
+####################
+# Check downloader #
+
+function check_downloader() {
+    if [[ -n "${USE_EXISTING_MPEG_TS_VIDEO_FILE}" ]]; then
+        echo 'Using existing MPEG-TS video file.'
+    elif [[ -n "${STREAMLINK_STREAM_URL}" ]]; then
+        streamlink --version
+    elif [[ -n "${YTDLP_STREAM_URL}" ]]; then
+        yt-dlp --version
+    elif [[ -n "${N_m3u8DL_RE_STREAM_URL}" ]]; then
+        N_m3u8DL-RE --version
+    elif [[ -n "${VIDEO_FILE_URL}" ]]; then
+        curl --version
+    elif [[ -n "${GENERATE_STILL_IMAGE_MPEG_TS}" ]]; then
+        echo 'Generating a still image MPEG-TS video.'
+    else
+        echo 'No downloader specified.'
+        exit 1
+    fi
+}
+
 ##############
 # ENTRYPOINT #
+
+function prepare() {
+    if [[ -n "${ENABLE_RCLONE}" ]]; then
+        init_rclone
+    fi
+
+    echo '------ vvvvvv prepare streamlink vvvvvv'
+    prepare_streamlink
+
+    echo '------ vvvvvv check downloader vvvvvv'
+    check_downloader
+}
+
+function cleanup() {
+    cleanup_streamlink
+}
 
 function main() {
     output_file_basename="${OUTPUT_FILENAME_BASE:-$(mktemp -u 'XXX')}"
@@ -497,15 +538,9 @@ function main() {
     fi
 
     # It could be a MKV. PLease believe our media player.
-    output_ts_base_path="/SL-downloads/${output_file_basename}.ts"
+    output_ts_base_path="/opt/downloads/${output_file_basename}.ts"
 
-    if [[ -n "${ENABLE_S3}" ]]; then
-        init_s3
-    fi
-
-    if [[ -n "${ENABLE_AZURE}" ]]; then
-        init_azure
-    fi
+    prepare
 
     process_stream_and_video "${output_ts_base_path}"
 
@@ -514,6 +549,8 @@ function main() {
     else
         echo 'Downloaded file not found'
     fi
+
+    cleanup
 }
 
 # ENTRYPOINT #
