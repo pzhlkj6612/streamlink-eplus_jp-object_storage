@@ -203,7 +203,7 @@ function process_stream_and_video() {
         "${ytdlp_record_stdout_command[@]}" &
 
     elif [[ -n "${N_m3u8DL_RE_STREAM_URL}" ]]; then
-        # yt-dlp --(.ts)-> pipe
+        # N_m3u8DL-RE -> pipe
 
         n_m3u8dl_re_record_stdout_command=(
             "${n_m3u8dl_re_record_stdout_no_url_no_format_partial_command[@]}"
